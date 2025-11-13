@@ -39,7 +39,8 @@ export default function Login() {
         <button className="login-btn" onClick={handleLogin}>Iniciar Sesión</button>
 
         <p className="login-link">
-          ¿No tienes cuenta? <a href="#">Regístrate</a>
+          ¿No tienes cuenta?{" "}
+          <a onClick={() => navigate("/register")}>Regístrate</a>
         </p>
 
         <p className="login-link small">
