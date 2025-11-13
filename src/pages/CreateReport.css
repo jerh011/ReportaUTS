@@ -1,0 +1,220 @@
+.create-container {
+  background: #fff8e6;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-bottom: 120px;
+}
+
+.create-header {
+  width: 100%;
+  background: white;
+  padding: 16px;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.create-header h2 {
+  color: #155033;
+  font-size: 35px;
+  font-weight: 600;
+}
+
+.create-header span {
+  font-weight: 400;
+  color: #3b664e;
+  font-size: 16px;
+}
+
+/* === Formulario === */
+.create-form {
+  width: 90%;
+  max-width: 450px;
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  background: white;
+  padding: 22px;
+  border-radius: 20px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+}
+
+.create-form label {
+  font-size: 14px;
+  color: #1c3a2d;
+  font-weight: 600;
+}
+
+.create-form input,
+.create-form select,
+.create-form textarea {
+  width: 100%;
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid #cde5d6;
+  font-size: 13px;
+  outline: none;
+  background: #f9fdfb;
+  transition: border-color 0.2s ease;
+}
+
+.create-form input:focus,
+.create-form select:focus,
+.create-form textarea:focus {
+  border-color: #2d7a50;
+}
+
+.create-form textarea {
+  resize: none;
+}
+
+/* === Subir imágenes === */
+.upload-box {
+  border: 2px dashed #b9d9c2;
+  padding: 12px;
+  text-align: center;
+  border-radius: 10px;
+  background: #f5fbf7;
+}
+
+.upload-box input {
+  font-size: 13px;
+  color: #2d7a50;
+}
+
+.preview-container {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.preview {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  background: #fff;
+}
+
+.preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.eliminar {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  background: rgba(255, 0, 0, 0.8);
+  border: none;
+  color: white;
+  border-radius: 50%;
+  width: 26px;
+  height: 26px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.eliminar:hover {
+  background: rgba(255, 0, 0, 1);
+}
+
+/* === Botones === */
+.form-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+  gap: 10px;
+}
+
+.cancel-btn {
+  background: #c83b3b;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  padding: 10px 16px;
+  cursor: pointer;
+  font-weight: 600;
+  width: 48%;
+}
+
+.submit-btn {
+  background: #1f7047;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  padding: 10px 16px;
+  cursor: pointer;
+  font-weight: 600;
+  width: 48%;
+  transition: background 0.3s;
+}
+
+.cancel-btn:hover { background: #a22e2e; }
+.submit-btn:hover { background: #155033; }
+
+/* === Barra inferior === */
+.bottom-nav {
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 12px;
+  width: calc(100% - 28px);
+  max-width: 520px;
+  background: white;
+  border-radius: 26px;
+  padding: 8px 10px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  z-index: 100;
+  gap: 8px;
+  height: 50px;
+}
+
+.nav-item {
+  background: transparent;
+  border: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.nav-item img {
+  width: 34px;
+  height: 34px;
+}
+
+.center-btn {
+  width: 66px;
+  height: 66px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 6px 18px rgba(45, 122, 80, 0.35);
+  border: 3px solid #f4f4f4;
+  transform: translateY(-16px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  z-index: 101;
+  transition: all 0.25s ease;
+}
+
+.center-btn img {
+  width: 36px;
+  height: 36px;
+}
