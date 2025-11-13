@@ -1,6 +1,14 @@
 import "./Login.css";
+import { useNavigate } from "react-router-dom";
 
 export default function Login() {
+  const navigate = useNavigate();
+
+  const handleLogin = () => {
+    // Simulación de autenticación
+    navigate("/home");
+  };
+
   return (
     <div className="login-container">
 
@@ -28,7 +36,7 @@ export default function Login() {
           />
         </div>
 
-        <button className="login-btn">Iniciar Sesión</button>
+        <button className="login-btn" onClick={handleLogin}>Iniciar Sesión</button>
 
         <p className="login-link">
           ¿No tienes cuenta? <a href="#">Regístrate</a>

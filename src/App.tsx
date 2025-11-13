@@ -1,19 +1,23 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Login from "./pages/Login";
-//import Home from "./pages/Home"; // luego la crearemos
+import Home from "./pages/Home";
+import CreateReport from "./pages/CreateReport";
+// import CommunityReports from "./pages/CommunityReports";
 
-function App() {
+export default function App() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* Página que se muestra al abrir */}
+
+        {/* Página de inicio de sesión */}
         <Route path="/" element={<Login />} />
 
-        {/* Página principal después de iniciar sesión */}
-        {/* <Route path="/home" element={<Home />} /> */}
+        {/* Página principal */}
+        <Route path="/home" element={<Home />} />
+
+        <Route path="/create" element={<CreateReport />} />
+        {/* <Route path="/community" element={<CommunityReports />} /> */}
       </Routes>
     </BrowserRouter>
   );
 }
-
-export default App;
