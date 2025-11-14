@@ -1,0 +1,124 @@
+/* Contenedor principal con fondo */
+.login-container {
+  min-height: 100dvh;
+  width: 100vw;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  background-image: url("/fondo cactus-tono verde.png");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  /* background-attachment: fixed; */
+
+  padding: 20px;
+}
+
+/* Caja de login */
+.login-box {
+  width: 100%;
+  max-width: 360px;
+  background: rgba(255, 255, 255, 0.92);
+  padding: 28px 26px;
+  border-radius: 18px;
+  backdrop-filter: blur(6px);
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+
+  box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+}
+
+/* Logo */
+.login-logo {
+  width: 130px;
+  display: block;
+  margin-bottom: -4px;
+}
+
+/* Título */
+.login-title {
+  color: #1f5a3b;
+  font-size: 22px;
+  font-weight: 600;
+  text-align: center;
+  margin-bottom: 6px;
+}
+
+/* Inputs */
+.login-input {
+  width: 100%;
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid #b8b8b8;
+  font-size: 15px;
+  outline: none;
+  transition: border .25s;
+  margin-bottom: 10px;
+}
+
+.login-input:focus {
+  border: 1px solid #1f5a3b;
+}
+
+/* Botón */
+.login-btn {
+  width: 100%;
+  padding: 12px;
+  background-color: #2d7a50;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background .25s;
+}
+
+.login-btn:hover {
+  background-color: #256442;
+}
+
+/* Links */
+.login-link {
+  font-size: 14px;
+  text-align: center;
+  color: #2f2f2f;
+}
+
+.login-link a {
+  color: #2d7a50;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.login-link.small {
+  font-size: 12px;
+  opacity: 0.85;
+}
+
+/* ----------- 📱 Responsividad ----------- */
+
+/* Ajuste general para pantallas móviles */
+@media (max-width: 500px) {
+  .login-box {
+    max-width: 90%;
+    padding: 24px 20px;
+  }
+
+  .login-title {
+    font-size: 20px;
+  }
+}
+
+/* Ajuste especial para pantallas MUY altas (Ej: Cubot KingKong 9) */
+@media screen and (max-width: 430px) and (min-height: 780px) {
+  .login-container {
+    background-size: cover;
+    background-position: top center; /* desplaza el fondo un poco arriba */
+  }
+}
