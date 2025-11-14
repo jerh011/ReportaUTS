@@ -1,0 +1,126 @@
+.register-container {
+  min-height: 100vh;
+  background-image: url("/fondo cactus-tono verde.png"); /* Usa la misma imagen que el login */
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 30px 20px;
+}
+
+.register-box {
+  background: rgba(255, 255, 255, 0.92);
+  border-radius: 20px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+  width: 100%;
+  max-width: 400px;
+  padding: 30px 24px;
+  text-align: center;
+  backdrop-filter: blur(6px);
+}
+
+.register-logo {
+  width: 85px;
+  margin-bottom: 10px;
+}
+
+.register-title {
+  font-size: 26px;
+  color: #155033;
+  font-weight: 700;
+  margin-bottom: 18px;
+}
+
+.register-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.register-form input {
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid #cde5d6;
+  background: #f9fdfb;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+.register-form input:focus {
+  border-color: #2d7a50;
+}
+
+.register-btn {
+  margin-top: 10px;
+  background: #2d7a50;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  padding: 12px;
+  font-weight: 600;
+  font-size: 15px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.register-btn:hover {
+  background: #1e5d3b;
+}
+
+.register-link {
+  margin-top: 16px;
+  font-size: 14px;
+  color: #1c3a2d;
+}
+
+.register-link a {
+  color: #2d7a50;
+  font-weight: 600;
+  text-decoration: none;
+}
+.login-link a {
+  color: #1f7047;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer; /* 👈 Esto muestra la manita */
+  transition: color 0.2s ease;
+}
+.login-link a:hover {
+  color: #155033; /* Un verde más oscuro al pasar el mouse */
+  text-decoration: underline; /* Opcional */
+}
+
+
+.register-link a:hover {
+  text-decoration: underline;
+}
+
+
+/* Responsivo */
+@media (max-width: 420px) {
+  .register-box {
+    padding: 24px 18px;
+  }
+
+  .register-title {
+    font-size: 22px;
+  }
+
+  .register-btn {
+    font-size: 14px;
+  }
+}
+
+
+/* 🔴 Borde rojo cuando falta información */
+.input-error {
+  border: 2px solid #e63946 !important;
+  background: #fff5f5;
+}
+
+/* Cuando ya hay texto, vuelve al borde normal */
+.register-form input:not(.input-error) {
+  border: 1px solid #cde5d6;
+}
