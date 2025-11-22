@@ -1,6 +1,7 @@
 import "./CreateReport.css";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import BottomNav from "../components/BottomNav";
 
 export default function CreateReport() {
   const nav = useNavigate();
@@ -187,24 +188,7 @@ export default function CreateReport() {
         </div>
       </form>
 
-      {/* Barra inferior */}
-      <nav className="bottom-nav">
-        <button className="nav-item center-btn" onClick={() => nav("/create")}>
-          <img src="/icons/Crear Reporte V2.png" alt="Crear" />
-        </button>
-        <button className="nav-item" onClick={() => nav("/my-reports")}>
-          <img src="/icons/Mis Reportes V1.png" alt="Mis reportes" />
-        </button>
-        <button className="nav-item " onClick={() => nav("/home")}>
-          <img src="/icons/casa V1.png" alt="Inicio" />
-        </button>
-        <button className="nav-item" onClick={() => nav("/community")}>
-          <img src="/icons/Reportes de Comunidad V1.png" alt="Comunidad" />
-        </button>
-        <button className="nav-item" onClick={() => nav("/profile")}>
-          <img src="/icons/Detalles Usuario V1.png" alt="Perfil" />
-        </button>
-      </nav>
+      <BottomNav />
     </div>
   );
 }
