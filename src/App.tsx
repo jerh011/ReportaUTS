@@ -5,6 +5,7 @@ import Home from "./pages/Home";
 import CreateReport from "./pages/CreateReport";
 import ReportesComunidad from "./pages/ReportesComunidad";
 import PerfilUsuario from "./pages/PerfilUsuario";
+import MisReportes from "./pages/MisReportes";
 
 export default function App() {
   return (
@@ -28,6 +29,9 @@ export default function App() {
 
         {/* Página de perfil del usuario */}
         <Route path="/profile" element={<PerfilUsuario />} />
+
+        {/* Página de mis reportes */}
+        <Route path="/my-reports" element={<MisReportes />} />
       </Routes>
     </BrowserRouter>
   );

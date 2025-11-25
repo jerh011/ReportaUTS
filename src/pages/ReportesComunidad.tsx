@@ -206,8 +206,6 @@ export default function ReportesComunidad() {
       {selected && (
         <div className="modal-backdrop" onClick={closeModal}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <button className="modal-x" onClick={closeModal} aria-label="Cerrar">✕</button>
-
             <img src={iconFor(selected.categoria)} alt="" className="modal-cat-icon" />
             <h2 className="modal-title">{selected.titulo}</h2>
 
