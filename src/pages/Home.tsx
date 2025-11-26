@@ -1,6 +1,7 @@
 import "./Home.css";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import BottomNav from "../components/BottomNav";
 
 export default function Home() {
   const nav = useNavigate();
@@ -110,24 +111,8 @@ export default function Home() {
         </button>
       </section>
 
-      {/* Bottom navigation */}
-      <nav className="bottom-nav" role="navigation" aria-label="Barra inferior">
-        <button className="nav-item" onClick={() => nav("/create")} aria-label="Crear reporte">
-          <img src="/icons/Crear Reporte V1.png" alt="Crear" />
-        </button>
-        <button className="nav-item" onClick={() => nav("/my-reports")} aria-label="Mis reportes">
-          <img src="/icons/Mis Reportes V1.png" alt="Mis reportes" />
-        </button>
-        <button className="nav-item center-btn" onClick={() => nav("/home")} aria-label="Inicio">
-          <img src="/icons/casa V2.png" alt="Inicio" />
-        </button>
-        <button className="nav-item" onClick={() => nav("/community")} aria-label="Comunidad">
-          <img src="/icons/Reportes de Comunidad V1.png" alt="Comunidad" />
-        </button>
-        <button className="nav-item" onClick={() => nav("/profile")} aria-label="Perfil">
-          <img src="/icons/Detalles Usuario V1.png" alt="Perfil" />
-        </button>
-      </nav>
+      <BottomNav />
+
     </div>
   );
 }

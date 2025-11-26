@@ -3,7 +3,9 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Home from "./pages/Home";
 import CreateReport from "./pages/CreateReport";
-// import CommunityReports from "./pages/CommunityReports";
+import ReportesComunidad from "./pages/ReportesComunidad";
+import PerfilUsuario from "./pages/PerfilUsuario";
+import MisReportes from "./pages/MisReportes";
 
 export default function App() {
   return (
@@ -22,7 +24,14 @@ export default function App() {
         {/* Página de crear un reporte */}
         <Route path="/create" element={<CreateReport />} />
 
-        {/* <Route path="/community" element={<CommunityReports />} /> */}
+        {/* Página de reportes de la comunidad */}
+        <Route path="/community" element={<ReportesComunidad />} /> 
+
+        {/* Página de perfil del usuario */}
+        <Route path="/profile" element={<PerfilUsuario />} />
+
+        {/* Página de mis reportes */}
+        <Route path="/my-reports" element={<MisReportes />} />
       </Routes>
     </BrowserRouter>
   );

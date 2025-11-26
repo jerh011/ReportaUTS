@@ -1,3 +1,4 @@
+import PWABadge from "../PWABadge";
 import "./Login.css";
 import { useNavigate } from "react-router-dom";
 
@@ -48,6 +49,7 @@ export default function Login() {
         </p>
 
       </div>
+      <PWABadge />
     </div>
   );
 }
