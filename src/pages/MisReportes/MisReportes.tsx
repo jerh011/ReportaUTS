@@ -1,7 +1,7 @@
 // src/pages/MisReportes.tsx
 import { useEffect, useMemo, useState } from "react";
 import "./MisReportes.css";
-import BottomNav from "../components/BottomNav";
+import BottomNav from "../../components/BottomNav";
 
 type CategoriaPrincipal = "Sistemas" | "Mantenimiento";
 type Estado = "Pendiente" | "Rechazado" | "Resuelto" | "Abierto";
