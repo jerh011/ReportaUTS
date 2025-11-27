@@ -1,12 +1,12 @@
 import { LoginDto } from "../Dtos/LoginDtos";
 import { AppStorageService } from "../lib/AppStorageService";
 
-const API_URL = "http://localhost:5276/api/Login";
+const API_URL = import.meta.env.VITE_API_URL;
 
 export const LoginService = {
   async login(data: LoginDto) {
     try {
-      const response = await fetch(API_URL, {
+      const response = await fetch(`${API_URL}/Login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),

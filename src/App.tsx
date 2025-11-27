@@ -3,7 +3,7 @@ import Login from "./pages/Login/Login";
 import Register from "./pages/Register/Register";
 import Home from "./pages/Home/Home";
 import CreateReport from "./pages/CreateReport/CreateReport";
-import ReportesComunidad from "./pages/ReportesComunidad";
+import ReportesComunidad from "./pages/ReportesComunidad/ReportesComunidad";
 import PerfilUsuario from "./pages/Perfil/PerfilUsuario";
 import MisReportes from "./pages/MisReportes/MisReportes";
 

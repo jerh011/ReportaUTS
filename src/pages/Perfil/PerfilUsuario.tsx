@@ -51,7 +51,7 @@ export default function PerfilUsuario() {
   useEffect(() => {
     const fetchProfile = async () => {
       const profile: UserModel | null = await ProfileService.getProfile();
-      console.log("Perfil obtenido:", profile);
+      // console.log("Perfil obtenido:", profile);
       if (profile) {
         setUser({
           username: profile.username ?? "",
@@ -115,7 +115,7 @@ export default function PerfilUsuario() {
 
     if (newPassword.trim()) payload.password = newPassword.trim();
 
-    console.log("Payload final:", payload);
+    // console.log("Payload final:", payload);
     setEditing(false);
     setNewPassword("");
     setConfirmPassword("");

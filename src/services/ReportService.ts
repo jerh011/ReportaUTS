@@ -4,7 +4,7 @@ import { Categoria } from "../Model/CategoriaMode";
 import { ReporteRegistroModel } from "../Model/ReporteRegistroModel";
 import { AppStorageService } from "../lib/AppStorageService";
 
-const API_URL = "http://localhost:5276/api";
+const API_URL = import.meta.env.VITE_API_URL;
 
 export const ReportService = {
   async GetEdificios(): Promise<Edificio[]> {
@@ -29,32 +29,35 @@ export const ReportService = {
     }
   },
 
-  async RegistrarReporte(reporte: ReporteRegistroModel): Promise<void> {
-    const rawUser = AppStorageService.get("user");
-    console.log("Usuario obtenido del almacenamiento:", rawUser);
+ async RegistrarReporte(reporte: ReporteRegistroModel): Promise<void> {
+  const rawUser = AppStorageService.get("user");
+  const usuario = typeof rawUser === "string" ? JSON.parse(rawUser) : rawUser;
+  
+  const usuarioId = usuario?.idUsuario ?? usuario?.id ?? null;
+  if (!usuarioId) throw new Error("Usuario no autenticado");
 
-    // Asegúrate de que rawUser sea un objeto
-    const usuario = typeof rawUser === "string" ? JSON.parse(rawUser) : rawUser;
+  reporte.usuarioId = usuarioId;
+  reporte.estadoId = 1;
+  reporte.imagen = reporte.imagen || "imagen_placeholder.jpg";
 
-    // Asigna el idUsuario al reporte de forma segura
-    reporte.usuarioId = usuario?.idUsuario ?? null;
+  // console.log("Reporte a registrar:", reporte);
 
-    console.log("Reporte listo para enviar:", reporte);
-    // if (!rawUser) {
-    //   console.error(
-    //     "Usuario no autenticado. No se puede registrar el reporte."
-    //   );
-    //   throw new Error("Usuario no autenticado");
-    // }
+  const response = await fetch(`${API_URL}/Reportes/RegistrarReporte`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Accept": "*/*"
+    },
+    body: JSON.stringify(reporte)
+  });
 
-    // // Parse seguro del usuario desde JSON
-    // const usuario = JSON.parse(rawUser) as { id: number };
+  if (!response.ok) {
+    // const errorText = await response.text();
+    // console.error("Error al registrar el reporte:", errorText);
+    throw new Error("Error al registrar reporte");
+  }
 
-    // // Asignar usuario y estado
-    // reporte.usuarioId = usuario.id;
-    // reporte.estadoId = 1; // Pendiente
-    // reporte.imagen = reporte.imagen || "imagen_placeholder.jpg";
+  // console.log("Reporte registrado correctamente");
+}
 
-    // console.log("Reporte a registrar:", reporte);
-  },
 };

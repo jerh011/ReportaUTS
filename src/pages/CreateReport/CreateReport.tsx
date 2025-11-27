@@ -1,7 +1,7 @@
 // src/pages/CreateReport.tsx
 import "./CreateReport.css";
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+ import { useNavigate } from "react-router-dom";
 import BottomNav from "../../components/BottomNav";
 import { ReportService } from "../../services/ReportService";
 import { Edificio } from "../../Model/EdifiioModel";
@@ -9,7 +9,7 @@ import { Categoria } from "../../Model/CategoriaMode";
 import { ReporteRegistroModel } from "../../Model/ReporteRegistroModel";
 
 export default function CreateReport() {
-  const nav = useNavigate();
+   const nav = useNavigate();
 
   const [formData, setFormData] = useState({
     privacidad: "",
@@ -92,10 +92,10 @@ export default function CreateReport() {
     try {
       await ReportService.RegistrarReporte(nuevoReporte);
       alert("Reporte enviado con éxito ✅");
-      nav("/home");
+       nav("/home");
     } catch (error) {
       console.error("Error al registrar el reporte:", error);
-      // console.log("Ocurrió un error al enviar el reporte ❌", nuevoReporte);
+      //  console.log("Ocurrió un error al enviar el reporte ❌", nuevoReporte);
     }
   };
 
@@ -204,7 +204,7 @@ export default function CreateReport() {
           <button
             type="button"
             className="cancel-btn"
-            onClick={() => nav("/home")}
+           onClick={() => nav("/home")}
           >
             Cancelar
           </button>

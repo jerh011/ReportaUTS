@@ -15,7 +15,8 @@ export const ProfileService = {
     }
   },
 
-  logout() {
+  async logout() {
+  
     AppStorageService.clearAll();
   },
 };

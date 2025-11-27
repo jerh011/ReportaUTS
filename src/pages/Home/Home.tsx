@@ -1,17 +1,34 @@
 import "./Home.css";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import BottomNav from "../../components/BottomNav";
+import { HomeService } from "../../services/HomeServise"; // tu servicio
+import { ReportsDto } from "../../Dtos/ReportsDto";
 
 export default function Home() {
   const nav = useNavigate();
   const [showAllNotifs, setShowAllNotifs] = useState(false);
+  const [reportes, setReportes] = useState<ReportsDto[]>([]);
 
+  // Datos estáticos de notificaciones
   const notificaciones = [
     "Tu reporte ‘Fallas en el pasillo 1102’ ha sido actualizado por el equipo técnico.",
     "Tu reporte ‘Aula 202 sin luz’ ha sido atendido por mantenimiento.",
     "Nuevo comentario en tu reporte ‘Pérdida de conexión Wi-Fi’ por parte del área TI.",
   ];
+
+  // Cargar reportes al montar
+  useEffect(() => {
+    async function cargarReportes() {
+      try {
+        const data = await HomeService.Reports(); // reemplaza 5 por id dinámico del usuario
+        setReportes(data);
+      } catch (error) {
+        console.error("Error al cargar reportes:", error);
+      }
+    }
+    cargarReportes();
+  }, []);
 
   return (
     <div className="home-container">
@@ -61,22 +78,25 @@ export default function Home() {
             <div className="report-table">
               <div className="table-header">
                 <span>Título</span>
-                {/* <span>Categoria</span> */}
                 <span>Estado</span>
                 <span>Fecha</span>
               </div>
-              <div className="table-row">
-                <span>🚧 Fuga en laboratorio</span>
-                {/* <span>Mantenimiento</span> */}
-                <span className="status pending">En proceso</span>
-                <span>10/11/25</span>
-              </div>
-              <div className="table-row">
-                <span>💡 Foco fundido biblioteca</span>
-                {/* <span>Mantenimiento</span> */}
-                <span className="status solved">Resuelto</span>
-                <span>08/11/25</span>
-              </div>
+
+              {reportes.length === 0 ? (
+                <div className="table-row">
+                  <span>No hay reportes aún</span>
+                </div>
+              ) : (
+                reportes.map((rep, i) => (
+                  <div key={i} className="table-row">
+                    <span>{rep.titulo}</span>
+                    <span className={`status ${rep.estado?.toLowerCase() ?? "pendiente"}`}>
+                    {rep.estado ?? "Pendiente"}
+                  </span>
+                    <span>{rep.fechaFormateada}</span>
+                  </div>
+                ))
+              )}
             </div>
             <button className="link-btn" onClick={() => nav("/my-reports")}>
               Ver más

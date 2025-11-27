@@ -1,7 +1,7 @@
 // src/pages/ReportesComunidad.tsx
 import { useEffect, useMemo, useState } from "react";
 import "./ReportesComunidad.css";
-import BottomNav from "../components/BottomNav";
+import BottomNav from "../../components/BottomNav";
 
 type CategoriaPrincipal = "Sistemas" | "Mantenimiento";
 type Estado = "Pendiente" | "Rechazado" | "Resuelto" | "Abierto";
