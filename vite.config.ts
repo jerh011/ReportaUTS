@@ -1,7 +1,7 @@
+// vite.config.ts
 import { VitePWA } from 'vite-plugin-pwa';
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
-
 
 export default defineConfig({
   plugins: [
@@ -9,42 +9,27 @@ export default defineConfig({
     VitePWA({
       registerType: 'autoUpdate',
       injectRegister: false,
-
-      pwaAssets: {
-        disabled: false,
-        config: true,
-      },
-
+      pwaAssets: { disabled: false, config: true },
       manifest: {
-        name: 'ReportaUTS',
-        short_name: 'ReportaUTS',
-        description: 'ReportaUTS',
+        name: 'ReportUTS',
+        short_name: 'ReportUTS',
+        description: 'ReportUTS',
         theme_color: '#ffffff',
-        // añade tus icons aquí si los tienes
-       icons: [{ src: '/icons/notificacion.png', sizes: '256x256', type: 'image/png' }]
       },
 
-     workbox: {
-  globIgnores: [
-    '**/cactus-background.png',
-    '**/fondo cactus-tono verde.png',
-    '**/fondo-cactus-tono-verde.png' // por si renombraste
-  ],
-  globPatterns: ['**/*.{js,css,html,svg,png,ico}'],
-  cleanupOutdatedCaches: true,
-  clientsClaim: true,
-  runtimeCaching: [
-    {
-      urlPattern: /\.(?:png|jpg|jpeg|webp|svg)$/,
-      handler: 'CacheFirst',
-      options: {
-        cacheName: 'images-runtime',
-        expiration: { maxEntries: 100, maxAgeSeconds: 60 * 60 * 24 * 30 },
-        cacheableResponse: { statuses: [0, 200] },
+      workbox: {
+        // Permitir archivos hasta 5 MiB (si necesitas precachearlos)
+        maximumFileSizeToCacheInBytes: 5 * 1024 * 1024, // 5 MiB
+
+        // Patrón de archivos a precachear
+        globPatterns: ['**/*.{js,css,html,svg,png,ico}'],
+
+        // Ignorar cualquier PNG que contenga "cactus" en el nombre (más robusto que nombres con espacios)
+        globIgnores: ['**/*cactus*.png'],
+
+        cleanupOutdatedCaches: true,
+        clientsClaim: true,
       },
-    },
-  ],
-},
 
       devOptions: {
         enabled: false,
