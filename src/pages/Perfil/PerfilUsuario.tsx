@@ -1,12 +1,15 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./PerfilUsuario.css";
-import BottomNav from "../components/BottomNav";
+import BottomNav from "../../components/BottomNav";
+import { ProfileService } from "../../services/ProfileService"; // Ajusta la ruta
+import type { UserModel } from "../../Model/UserModel";
+import { useNavigate } from "react-router-dom";
 
 type UserData = {
   username: string;
   nombres: string;
   apellidos: string;
-  correo: string;
+  // correo: string;
   no_cel: string | null;
   created_at: string;
 };
@@ -15,19 +18,20 @@ type UpdateUserPayload = {
   username: string;
   nombres: string;
   apellidos: string;
-  correo: string;
+  // correo: string;
   no_cel: string | null;
   password?: string;
 };
 
 export default function PerfilUsuario() {
+  const navigate = useNavigate();
   const [user, setUser] = useState<UserData>({
-    username: "johan01",
-    nombres: "Johan Alberto",
-    apellidos: "Lopez Ruiz",
-    correo: "johan@example.com",
-    no_cel: "5550123456",
-    created_at: "2025-01-04",
+    username: "",
+    nombres: "",
+    apellidos: "",
+    // correo: "",
+    no_cel: null,
+    created_at: "",
   });
 
   const [editing, setEditing] = useState(false);
@@ -35,12 +39,37 @@ export default function PerfilUsuario() {
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
+  const CerrarSecion = async () => {
+    try {
+      await ProfileService.logout();
+      navigate("/login");
+    } catch (error) {
+      console.error("Error en logout:", error);
+    }
+  };
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      const profile: UserModel | null = await ProfileService.getProfile();
+      console.log("Perfil obtenido:", profile);
+      if (profile) {
+        setUser({
+          username: profile.username ?? "",
+          nombres: profile.nombres ?? "",
+          apellidos: profile.apellidos ?? "",
+          // correo: profile.correo ?? "", // Comentado para usar después
+          no_cel: profile.noCel ?? null,
+          created_at: profile.createdAt ?? "",
+        });
+      }
+    };
+    fetchProfile();
+  }, []);
+
   const validate = () => {
     const errs: Record<string, string> = {};
-
     const namesRegex = /^[A-Za-zÁ-Úá-úÑñ]+( [A-Za-zÁ-Úá-úÑñ]+)*$/;
     const usernameRegex = /^[A-Za-z0-9_.-]+$/;
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
     if (!namesRegex.test(user.nombres.trim())) {
       errs.nombres = "Solo letras y un espacio entre palabras.";
@@ -50,9 +79,6 @@ export default function PerfilUsuario() {
     }
     if (!usernameRegex.test(user.username.trim())) {
       errs.username = "Solo letras, números y _, ., -";
-    }
-    if (!emailRegex.test(user.correo.trim())) {
-      errs.correo = "Correo inválido.";
     }
     if (user.no_cel && !/^\d{10}$/.test(user.no_cel.trim())) {
       errs.no_cel = "Debe tener 10 dígitos.";
@@ -83,16 +109,13 @@ export default function PerfilUsuario() {
       username: user.username.trim(),
       nombres: user.nombres.trim(),
       apellidos: user.apellidos.trim(),
-      correo: user.correo.trim(),
+      // correo: user.correo?.trim(),
       no_cel: user.no_cel ? user.no_cel.trim() : null,
     };
 
-    if (newPassword.trim()) {
-      payload.password = newPassword.trim();
-    }
+    if (newPassword.trim()) payload.password = newPassword.trim();
 
     console.log("Payload final:", payload);
-
     setEditing(false);
     setNewPassword("");
     setConfirmPassword("");
@@ -100,7 +123,6 @@ export default function PerfilUsuario() {
 
   return (
     <div className="perfil-container">
-
       {/* HEADER */}
       <header className="perfil-header">
         <h1 className="perfil-title-centered">Mi Perfil</h1>
@@ -108,7 +130,6 @@ export default function PerfilUsuario() {
 
       {/* MAIN */}
       <div className="perfil-main">
-
         {/* FECHA DE CREACIÓN */}
         <div className="perfil-card small-info-card">
           <p className="fecha-creacion">
@@ -118,66 +139,31 @@ export default function PerfilUsuario() {
 
         {/* CAMPOS */}
         <div className="perfil-card">
-
-          <div className="perfil-row">
-            <label>Usuario</label>
-            <input
-              name="username"
-              value={user.username}
-              onChange={handleInput}
-              readOnly={!editing}
-              className={errors.username ? "invalid" : ""}
-            />
-            {errors.username && <span className="error">{errors.username}</span>}
-          </div>
-
-          <div className="perfil-row">
-            <label>Nombres</label>
-            <input
-              name="nombres"
-              value={user.nombres}
-              onChange={handleInput}
-              readOnly={!editing}
-              className={errors.nombres ? "invalid" : ""}
-            />
-            {errors.nombres && <span className="error">{errors.nombres}</span>}
-          </div>
-
-          <div className="perfil-row">
-            <label>Apellidos</label>
-            <input
-              name="apellidos"
-              value={user.apellidos}
-              onChange={handleInput}
-              readOnly={!editing}
-              className={errors.apellidos ? "invalid" : ""}
-            />
-            {errors.apellidos && <span className="error">{errors.apellidos}</span>}
-          </div>
-
-          <div className="perfil-row">
-            <label>Correo</label>
-            <input
-              name="correo"
-              value={user.correo}
-              onChange={handleInput}
-              readOnly={!editing}
-              className={errors.correo ? "invalid" : ""}
-            />
-            {errors.correo && <span className="error">{errors.correo}</span>}
-          </div>
-
-          <div className="perfil-row">
-            <label>Número de teléfono</label>
-            <input
-              name="no_cel"
-              value={user.no_cel ?? ""}
-              onChange={handleInput}
-              readOnly={!editing}
-              className={errors.no_cel ? "invalid" : ""}
-            />
-            {errors.no_cel && <span className="error">{errors.no_cel}</span>}
-          </div>
+          {[
+            { label: "Usuario", name: "username", value: user.username },
+            { label: "Nombres", name: "nombres", value: user.nombres },
+            { label: "Apellidos", name: "apellidos", value: user.apellidos },
+            // { label: "Correo", name: "correo", value: user.correo }, // Comentado
+            {
+              label: "Número de teléfono",
+              name: "no_cel",
+              value: user.no_cel ?? "",
+            },
+          ].map((field) => (
+            <div key={field.name} className="perfil-row">
+              <label>{field.label}</label>
+              <input
+                name={field.name}
+                value={field.value}
+                onChange={handleInput}
+                readOnly={!editing}
+                className={errors[field.name] ? "invalid" : ""}
+              />
+              {errors[field.name] && (
+                <span className="error">{errors[field.name]}</span>
+              )}
+            </div>
+          ))}
 
           {editing && (
             <>
@@ -209,7 +195,6 @@ export default function PerfilUsuario() {
             </>
           )}
 
-          {/* BOTONES DENTRO DEL CARD ABAJO DERECHA */}
           <div className="perfil-actions-bottom">
             {!editing ? (
               <button className="btn-editar" onClick={() => setEditing(true)}>
@@ -217,7 +202,10 @@ export default function PerfilUsuario() {
               </button>
             ) : (
               <>
-                <button className="btn-cancel" onClick={() => setEditing(false)}>
+                <button
+                  className="btn-cancel"
+                  onClick={() => setEditing(false)}
+                >
                   Cancelar
                 </button>
                 <button className="btn-guardar" onClick={saveChanges}>
@@ -226,12 +214,16 @@ export default function PerfilUsuario() {
               </>
             )}
           </div>
-
         </div>
 
         {/* LOGOUT */}
         <div className="perfil-logout-wrap">
-          <button className="btn-logout small-logout-btn">Cerrar sesión</button>
+          <button
+            className="btn-logout small-logout-btn"
+            onClick={CerrarSecion}
+          >
+            Cerrar sesión
+          </button>
         </div>
       </div>
 

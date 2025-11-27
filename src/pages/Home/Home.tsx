@@ -1,7 +1,7 @@
 import "./Home.css";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import BottomNav from "../components/BottomNav";
+import BottomNav from "../../components/BottomNav";
 
 export default function Home() {
   const nav = useNavigate();
@@ -112,7 +112,6 @@ export default function Home() {
       </section>
 
       <BottomNav />
-
     </div>
   );
 }

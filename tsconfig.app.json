@@ -24,5 +24,7 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true
   },
+  // "forceConsistentCasingInFileNames": true, // cspell: disable-line
+
   "include": ["src"]
 }
