@@ -1,7 +1,12 @@
+// src/pages/CreateReport.tsx
 import "./CreateReport.css";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import BottomNav from "../../components/BottomNav";
+import { ReportService } from "../../services/ReportService";
+import { Edificio } from "../../Model/EdifiioModel";
+import { Categoria } from "../../Model/CategoriaMode";
+import { ReporteRegistroModel } from "../../Model/ReporteRegistroModel";
 
 export default function CreateReport() {
   const nav = useNavigate();
@@ -11,17 +16,36 @@ export default function CreateReport() {
     edificio: "",
     titulo: "",
     categoria: "",
-    area: "",
     descripcion: "",
   });
 
+  const [edificios, setEdificios] = useState<Edificio[]>([]);
+  const [categorias, setCategorias] = useState<Categoria[]>([]);
   const [imagenes, setImagenes] = useState<{ file: File; url: string }[]>([]);
 
+  // Traer edificios y categorías al montar el componente
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const edificiosData = await ReportService.GetEdificios();
+        setEdificios(edificiosData);
+
+        const categoriasData = await ReportService.GetCategorias();
+        setCategorias(categoriasData);
+      } catch (error) {
+        console.error("Error cargando datos:", error);
+      }
+    };
+    fetchData();
+  }, []);
+
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+    >
   ) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    setFormData({ ...formData, [name]: value }); // value siempre string
   };
 
   const handleImage = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -49,22 +73,40 @@ export default function CreateReport() {
     setImagenes((prev) => prev.filter((_, i) => i !== index));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    alert("Reporte enviado con éxito ✅");
-    nav("/home");
+
+    const categoriaId = formData.categoria ? Number(formData.categoria) : 0;
+    const edificioId = formData.edificio ? Number(formData.edificio) : 0;
+
+    const nuevoReporte: ReporteRegistroModel = {
+      titulo: formData.titulo,
+      descripcion: formData.descripcion,
+      privacidad: formData.privacidad === "privado",
+      edificioId,
+      categoriaId,
+      estadoId: 1, // Pendiente
+      imagen: imagenes[0]?.url || "imagen_placeholder.jpg",
+    };
+
+    try {
+      await ReportService.RegistrarReporte(nuevoReporte);
+      alert("Reporte enviado con éxito ✅");
+      nav("/home");
+    } catch (error) {
+      console.error("Error al registrar el reporte:", error);
+      // console.log("Ocurrió un error al enviar el reporte ❌", nuevoReporte);
+    }
   };
 
   return (
     <div className="create-container">
-      {/* Encabezado */}
       <header className="create-header">
         <h2>
           Crear Reporte <span>(Formulario)</span>
         </h2>
       </header>
 
-      {/* Formulario */}
       <form className="create-form" onSubmit={handleSubmit}>
         <label>Privacidad del Reporte</label>
         <select
@@ -86,15 +128,11 @@ export default function CreateReport() {
           required
         >
           <option value="">Seleccionar edificio</option>
-          <option value="Idiomas">Edificio de Idiomas</option>
-          {[1, 2, 3, 4, 5].map((num) => (
-            <option key={num} value={`Edificio ${num}`}>
-              Edificio {num}
+          {edificios.map((e) => (
+            <option key={`edificio-${e.id_edificio}`} value={e.id_edificio}>
+              {e.nombre}
             </option>
           ))}
-          <option value="Servicios Escolares">Servicios Escolares</option>
-          <option value="Rectoría">Rectoría</option>
-          <option value="Cafetería">Cafetería</option>
         </select>
 
         <label>Título del Reporte</label>
@@ -115,23 +153,14 @@ export default function CreateReport() {
           required
         >
           <option value="">Seleccionar</option>
-          <option value="Sistemas">Sistemas</option>
-          <option value="Mantenimiento">Mantenimiento</option>
-        </select>
-
-        <label>Área solicitante</label>
-        <select
-          name="area"
-          value={formData.area}
-          onChange={handleChange}
-          required
-        >
-          <option value="">Seleccionar</option>
-          <option value="academico">Académico</option>
-          <option value="rectoria">Rectoría</option>
-          <option value="finanzas">Administración de Finanzas</option>
-          <option value="vinculacion">Vinculación y Extensión Universitaria</option>
-          <option value="estudiantes">Estudiantes</option>
+          {categorias.map((c) => (
+            <option
+              key={`categoria-${c.idcategorias}`}
+              value={c.idcategorias?.toString() || ""}
+            >
+              {c.nombre}
+            </option>
+          ))}
         </select>
 
         <label>Descripción</label>
@@ -144,7 +173,6 @@ export default function CreateReport() {
           required
         />
 
-        {/* Subir imágenes */}
         <label>Subir imágenes (máx. 2)</label>
         <div className="upload-box">
           <input
@@ -154,11 +182,10 @@ export default function CreateReport() {
             onChange={handleImage}
             disabled={imagenes.length >= 2}
           />
-
           {imagenes.length > 0 && (
             <div className="preview-container">
               {imagenes.map((img, index) => (
-                <div className="preview" key={index}>
+                <div className="preview" key={`preview-${index}`}>
                   <img src={img.url} alt={`imagen-${index}`} />
                   <button
                     type="button"
@@ -173,7 +200,6 @@ export default function CreateReport() {
           )}
         </div>
 
-        {/* Botones */}
         <div className="form-actions">
           <button
             type="button"
