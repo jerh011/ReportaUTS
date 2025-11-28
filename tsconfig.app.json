@@ -26,5 +26,5 @@
   },
   // "forceConsistentCasingInFileNames": true, // cspell: disable-line
 
-  "include": ["src"]
+  "include": ["src", "routes/PublicOnlyRoute.tsx", "routes/ProtectedRoutes.tsx"]
 }

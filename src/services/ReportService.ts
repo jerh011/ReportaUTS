@@ -1,13 +1,13 @@
 // src/services/ReportService.ts
-import { Edificio } from "../Model/EdifiioModel";
-import { Categoria } from "../Model/CategoriaMode";
 import { ReporteRegistroModel } from "../Model/ReporteRegistroModel";
 import { AppStorageService } from "../lib/AppStorageService";
-
+import { ImageBase64Converter } from "../lib/ImageBase64Converter";
+import { Edificio } from "../Model/EdifiioModel";
+import { Categoria } from "../Model/CategoriaMode";
 const API_URL = import.meta.env.VITE_API_URL;
 
 export const ReportService = {
-  async GetEdificios(): Promise<Edificio[]> {
+   async GetEdificios(): Promise<Edificio[]> {
     try {
       const response = await fetch(`${API_URL}/Edificio`);
       if (!response.ok) throw new Error(`Error: ${response.status}`);
@@ -28,36 +28,42 @@ export const ReportService = {
       return [];
     }
   },
-
- async RegistrarReporte(reporte: ReporteRegistroModel): Promise<void> {
-  const rawUser = AppStorageService.get("user");
-  const usuario = typeof rawUser === "string" ? JSON.parse(rawUser) : rawUser;
   
-  const usuarioId = usuario?.idUsuario ?? usuario?.id ?? null;
-  if (!usuarioId) throw new Error("Usuario no autenticado");
+  async RegistrarReporte(reporte: ReporteRegistroModel): Promise<boolean> {
+    // Obtener usuario
+    const rawUser = AppStorageService.get("user");
+    const usuario = typeof rawUser === "string" ? JSON.parse(rawUser) : rawUser;
+    const usuarioId = usuario?.idUsuario ?? usuario?.id ?? null;
+    if (!usuarioId) throw new Error("Usuario no autenticado");
 
-  reporte.usuarioId = usuarioId;
-  reporte.estadoId = 1;
-  reporte.imagen = reporte.imagen || "imagen_placeholder.jpg";
+    reporte.usuarioId = usuarioId;
+    reporte.estadoId = 1;
 
-  // console.log("Reporte a registrar:", reporte);
+    // Convertir la imagen a Base64 si es un File
+    if (reporte.imagen instanceof File) {
+      reporte.imagen = await ImageBase64Converter.fileToBase64(reporte.imagen);
+    } else {
+      reporte.imagen = reporte.imagen || "imagen_placeholder.jpg";
+    }
 
-  const response = await fetch(`${API_URL}/Reportes/RegistrarReporte`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "Accept": "*/*"
-    },
-    body: JSON.stringify(reporte)
-  });
+    // Enviar al backend
+    const response = await fetch(`${API_URL}/Reportes/RegistrarReporte`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Accept": "*/*",
+      },
+      body: JSON.stringify(reporte),
+    });
 
-  if (!response.ok) {
-    // const errorText = await response.text();
-    // console.error("Error al registrar el reporte:", errorText);
-    throw new Error("Error al registrar reporte");
-  }
+    if (response.ok) return true;
 
-  // console.log("Reporte registrado correctamente");
-}
+    let errorMensaje = "Error al registrar reporte";
+    try {
+      const texto = await response.text();
+      if (texto) errorMensaje += `: ${texto}`;
+    } catch {}
 
+    throw new Error(errorMensaje);
+  },
 };

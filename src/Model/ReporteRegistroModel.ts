@@ -6,5 +6,5 @@ export class ReporteRegistroModel {
   categoriaId?: number;
   usuarioId?: number;
   estadoId?: number;
-  imagen?: string;
+  imagen?: File | string; // <-- aquí
 }
