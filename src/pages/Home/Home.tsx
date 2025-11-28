@@ -21,7 +21,7 @@ export default function Home() {
   useEffect(() => {
     async function cargarReportes() {
       try {
-        const data = await HomeService.Reports(); // reemplaza 5 por id dinámico del usuario
+        const data = await HomeService.getReportes(); // reemplaza 5 por id dinámico del usuario
         setReportes(data);
       } catch (error) {
         console.error("Error al cargar reportes:", error);

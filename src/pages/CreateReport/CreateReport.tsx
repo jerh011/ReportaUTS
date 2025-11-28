@@ -1,18 +1,18 @@
 // src/pages/CreateReport.tsx
 import "./CreateReport.css";
-import { useState, useEffect } from "react";
- import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react"; 
 import BottomNav from "../../components/BottomNav";
 import { ReportService } from "../../services/ReportService";
 import { Edificio } from "../../Model/EdifiioModel";
 import { Categoria } from "../../Model/CategoriaMode";
 import { ReporteRegistroModel } from "../../Model/ReporteRegistroModel";
+import { useNavigate } from "react-router-dom";
 
 export default function CreateReport() {
-   const nav = useNavigate();
+  const nav = useNavigate();
 
   const [formData, setFormData] = useState({
-    privacidad: "",
+    privacidad: null as boolean | null,
     edificio: "",
     titulo: "",
     categoria: "",
@@ -23,7 +23,6 @@ export default function CreateReport() {
   const [categorias, setCategorias] = useState<Categoria[]>([]);
   const [imagenes, setImagenes] = useState<{ file: File; url: string }[]>([]);
 
-  // Traer edificios y categorías al montar el componente
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -40,12 +39,13 @@ export default function CreateReport() {
   }, []);
 
   const handleChange = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
-    >
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value }); // value siempre string
+    setFormData({
+      ...formData,
+      [name]: name === "privacidad" ? value === "true" : value,
+    });
   };
 
   const handleImage = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -82,20 +82,19 @@ export default function CreateReport() {
     const nuevoReporte: ReporteRegistroModel = {
       titulo: formData.titulo,
       descripcion: formData.descripcion,
-      privacidad: formData.privacidad === "privado",
+      privacidad: formData.privacidad ?? false,
       edificioId,
       categoriaId,
-      estadoId: 1, // Pendiente
-      imagen: imagenes[0]?.url || "imagen_placeholder.jpg",
+      estadoId: 1,
+      imagen: imagenes[0]?.file || null,
     };
 
     try {
       await ReportService.RegistrarReporte(nuevoReporte);
       alert("Reporte enviado con éxito ✅");
-       nav("/home");
+      nav("/home");
     } catch (error) {
       console.error("Error al registrar el reporte:", error);
-      //  console.log("Ocurrió un error al enviar el reporte ❌", nuevoReporte);
     }
   };
 
@@ -111,13 +110,13 @@ export default function CreateReport() {
         <label>Privacidad del Reporte</label>
         <select
           name="privacidad"
-          value={formData.privacidad}
+          value={formData.privacidad !== null ? formData.privacidad.toString() : ""}
           onChange={handleChange}
           required
         >
           <option value="">Seleccionar</option>
-          <option value="publico">Público</option>
-          <option value="privado">Privado</option>
+          <option value="true">Público</option>
+          <option value="false">Privado</option>
         </select>
 
         <label>Edificio</label>
@@ -204,7 +203,7 @@ export default function CreateReport() {
           <button
             type="button"
             className="cancel-btn"
-           onClick={() => nav("/home")}
+            onClick={() => nav("/home")}
           >
             Cancelar
           </button>

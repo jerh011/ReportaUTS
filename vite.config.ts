@@ -15,18 +15,24 @@ export default defineConfig({
         short_name: 'ReportUTS',
         description: 'ReportUTS',
         theme_color: '#ffffff',
+        icons: [
+          {
+            src: '/icons/campana-128.png',
+            sizes: '128x128',
+            type: 'image/png'
+          },
+          {
+            src: '/icons/campana-512.png',
+            sizes: '512x512',
+            type: 'image/png'
+          }
+        ]
       },
 
       workbox: {
-        // Permitir archivos hasta 5 MiB (si necesitas precachearlos)
-        maximumFileSizeToCacheInBytes: 5 * 1024 * 1024, // 5 MiB
-
-        // Patrón de archivos a precachear
+        maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
         globPatterns: ['**/*.{js,css,html,svg,png,ico}'],
-
-        // Ignorar cualquier PNG que contenga "cactus" en el nombre (más robusto que nombres con espacios)
         globIgnores: ['**/*cactus*.png'],
-
         cleanupOutdatedCaches: true,
         clientsClaim: true,
       },

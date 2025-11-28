@@ -6,33 +6,91 @@ import CreateReport from "./pages/CreateReport/CreateReport";
 import ReportesComunidad from "./pages/ReportesComunidad/ReportesComunidad";
 import PerfilUsuario from "./pages/Perfil/PerfilUsuario";
 import MisReportes from "./pages/MisReportes/MisReportes";
+import ProtectedRoutes from "./routes/ProtectedRoutes";
+import PublicOnlyRoute from "./routes/PublicOnlyRoute";
+import PWABadge from "./PWABadge";
 
 export default function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Login />} />
-        {/* Página de inicio de sesión */}
-        <Route path="/login" element={<Login />} />
+    <div>
+      <BrowserRouter>
+        <Routes>
+          <Route
+            path="/"
+            element={
+              <PublicOnlyRoute>
+                <Login />
+              </PublicOnlyRoute>
+            }
+          />
 
-        {/* Página de registro */}
-        <Route path="/register" element={<Register />} />
+          <Route
+            path="/login"
+            element={
+              <PublicOnlyRoute>
+                <Login />
+              </PublicOnlyRoute>
+            }
+          />
 
-        {/* Página principal */}
-        <Route path="/home" element={<Home />} />
+          <Route
+            path="/register"
+            element={
+              <PublicOnlyRoute>
+                <Register />
+              </PublicOnlyRoute>
+            }
+          />
 
-        {/* Página de crear un reporte */}
-        <Route path="/create" element={<CreateReport />} />
+          {/* Rutas protegidas (solo usuario logueado) */}
+          <Route
+            path="/home"
+            element={
+              <ProtectedRoutes>
+                <Home />
+              </ProtectedRoutes>
+            }
+          />
 
-        {/* Página de reportes de la comunidad */}
-        <Route path="/community" element={<ReportesComunidad />} />
+          <Route
+            path="/create"
+            element={
+              <ProtectedRoutes>
+                <CreateReport />
+              </ProtectedRoutes>
+            }
+          />
 
-        {/* Página de perfil del usuario */}
-        <Route path="/profile" element={<PerfilUsuario />} />
+          <Route
+            path="/community"
+            element={
+              <ProtectedRoutes>
+                <ReportesComunidad />
+              </ProtectedRoutes>
+            }
+          />
 
-        {/* Página de mis reportes */}
-        <Route path="/my-reports" element={<MisReportes />} />
-      </Routes>
-    </BrowserRouter>
+          <Route
+            path="/profile"
+            element={
+              <ProtectedRoutes>
+                <PerfilUsuario />
+              </ProtectedRoutes>
+            }
+          />
+
+          <Route
+            path="/my-reports"
+            element={
+              <ProtectedRoutes>
+                <MisReportes />
+              </ProtectedRoutes>
+            }
+          />
+
+        </Routes>
+      </BrowserRouter>
+      <PWABadge />
+    </div>
   );
 }
