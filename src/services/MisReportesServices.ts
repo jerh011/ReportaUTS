@@ -9,7 +9,7 @@ export const MisReportesServices = {
     console.log(rawUser);
     const usuario = typeof rawUser === "string" ? JSON.parse(rawUser) : rawUser;
     const usuarioId = usuario?.idUsuario ?? usuario?.id ?? null;
-    alert(usuarioId);
+    // alert(usuarioId);
     try {
       const response = await fetch(
         `${API_URL}/Reportes/ReportePorUsuarioWhitImagenDto?idUsuario=${usuarioId}`,
