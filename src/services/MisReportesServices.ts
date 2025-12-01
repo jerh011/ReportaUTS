@@ -1,15 +1,18 @@
 import { ReportePorUsuarioWhitImagen } from "../Dtos/ReportePorUsuarioWhitImagen";
-
+import { AppStorageService } from "../lib/AppStorageService";
 import { env } from "../../env";
 const API_URL = env.VITE_API_URL;
 const VITE_API_IMAGE = env.VITE_API_IMAGE;
 export const MisReportesServices = {
-  async ReportsWithImagenes(
-    idUsuario: number = 21
-  ): Promise<ReportePorUsuarioWhitImagen[]> {
+  async ReportsWithImagenes(): Promise<ReportePorUsuarioWhitImagen[]> {
+    const rawUser = AppStorageService.get("user");
+    console.log(rawUser);
+    const usuario = typeof rawUser === "string" ? JSON.parse(rawUser) : rawUser;
+    const usuarioId = usuario?.idUsuario ?? usuario?.id ?? null;
+    // alert(usuarioId);
     try {
       const response = await fetch(
-        `${API_URL}/Reportes/ReportePorUsuarioWhitImagenDto?idUsuario=${idUsuario}`,
+        `${API_URL}/Reportes/ReportePorUsuarioWhitImagenDto?idUsuario=${usuarioId}`,
         {
           method: "GET",
           headers: {
