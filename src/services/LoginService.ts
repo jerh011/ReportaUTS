@@ -1,7 +1,8 @@
 import { LoginDto } from "../Dtos/LoginDtos";
 import { AppStorageService } from "../lib/AppStorageService";
-
-const API_URL = import.meta.env.VITE_API_URL;
+import { RegisterUserDto } from "../Dtos/RegisterUserDto ";
+import { env } from "../../env";
+const API_URL = env.VITE_API_URL;
 
 export const LoginService = {
   async login(data: LoginDto) {
@@ -31,18 +32,29 @@ export const LoginService = {
     }
   },
 
-  // Leer sesión completa
-  getSession() {
-    const user = AppStorageService.get("user");
-    const role = AppStorageService.get("role");
-    const accessToken = AppStorageService.get("accessToken");
-    const refreshToken = AppStorageService.get("refreshToken");
+  async RegistrarUsuario(data: RegisterUserDto): Promise<boolean> {
+    try {
+      const response = await fetch(`${API_URL}/Login/RegistrarUsuario`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
 
-    if (!user || !role || !accessToken || !refreshToken) return null;
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error("Error del backend:", errorText);
+        return false;
+      }
 
-    return { user, role, accessToken, refreshToken };
+      // El backend devuelve texto ("registro exitoso"), no JSON
+      const text = await response.text();
+      console.log("Respuesta del servidor:", text);
+
+      // Si contiene la palabra 'exitoso', asumimos éxito
+      return text.toLowerCase().includes("exitoso");
+    } catch (error) {
+      console.error("Error en RegistrarUsuario:", error);
+      return false;
+    }
   },
-
-  // Cerrar sesión
-
 };

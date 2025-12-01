@@ -1,18 +1,12 @@
+// src/pages/Register.tsx
 import "./Register.css";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { LoginService } from "../../services/LoginService";
+import { RegisterUserDto } from "../../Dtos/RegisterUserDto ";
 
 export default function Register() {
   const navigate = useNavigate();
-
-  const [touched, setTouched] = useState({
-    nombre: false,
-    apellidos: false,
-    usuario: false,
-    contrasena: false,
-    confirmar: false,
-    correo: false,
-  });
 
   const [formData, setFormData] = useState({
     nombre: "",
@@ -20,144 +14,98 @@ export default function Register() {
     usuario: "",
     contrasena: "",
     confirmar: "",
-    correo: "",
     telefono: "",
   });
 
-  const [passwordError, setPasswordError] = useState("");
-
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-
-    // SOLO números en teléfono
-    if (name === "telefono") {
-      if (!/^\d*$/.test(value)) return;
-    }
-
-    setFormData({ ...formData, [name]: value });
-
-    // Validación en tiempo real de contraseñas
-    if (name === "contrasena" || name === "confirmar") {
-      if (
-        (name === "contrasena" && value !== formData.confirmar) ||
-        (name === "confirmar" && value !== formData.contrasena)
-      ) {
-        setPasswordError("Las contraseñas no coinciden");
-      } else {
-        setPasswordError("");
-      }
-    }
+    // solo números en teléfono
+    if (name === "telefono" && !/^\d*$/.test(value)) return;
+    setFormData((p) => ({ ...p, [name]: value }));
   };
 
-  const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
-    const { name } = e.target;
-    setTouched((prev) => ({ ...prev, [name]: true }));
-  };
-
-  const handleRegister = (e: React.FormEvent) => {
+  const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (passwordError) {
-      alert("Corrige los errores antes de continuar.");
+    if (
+      !formData.usuario ||
+      !formData.contrasena ||
+      formData.contrasena !== formData.confirmar
+    ) {
+      alert(
+        "Completa usuario/contraseña y asegúrate que las contraseñas coincidan."
+      );
       return;
     }
 
-    alert("Cuenta creada exitosamente ✅");
-    navigate("/login");
+    const dto: RegisterUserDto = {
+      nombre: formData.nombre || undefined,
+      apellidos: formData.apellidos || undefined,
+      username: formData.usuario,
+      contrasena: formData.contrasena,
+      num_cel: formData.telefono || null,
+    };
+
+    try {
+      const ok: boolean = await LoginService.RegistrarUsuario(dto);
+      if (ok) {
+        alert("Cuenta creada ✅");
+        navigate("/login");
+      } else {
+        alert("Error al crear cuenta ❌");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Error al conectar con el servidor.");
+    }
   };
 
   return (
     <div className="register-container">
       <div className="register-box">
-        <img src="/logo.png" alt="Logo ReportaUTS" className="register-logo" />
+        <img src="/logo.png" alt="Logo" className="register-logo" />
         <h1 className="register-title">ReportaUTS</h1>
 
         <form onSubmit={handleRegister} className="register-form">
-          {/* CAMPOS OBLIGATORIOS */}
           <input
-            type="text"
             name="nombre"
             placeholder="Nombre(s)"
             value={formData.nombre}
             onChange={handleChange}
-            onBlur={handleBlur}
-            className={touched.nombre && !formData.nombre ? "input-error" : ""}
-            required
           />
-
           <input
-            type="text"
             name="apellidos"
             placeholder="Apellidos"
             value={formData.apellidos}
             onChange={handleChange}
-            onBlur={handleBlur}
-            className={touched.apellidos && !formData.apellidos ? "input-error" : ""}
-            required
           />
-
           <input
-            type="text"
             name="usuario"
             placeholder="Nombre de usuario"
             value={formData.usuario}
             onChange={handleChange}
-            onBlur={handleBlur}
-            className={touched.usuario && !formData.usuario ? "input-error" : ""}
             required
           />
-
-          {/* CONTRASEÑA */}
           <input
-            type="password"
             name="contrasena"
+            type="password"
             placeholder="Contraseña"
             value={formData.contrasena}
             onChange={handleChange}
-            onBlur={handleBlur}
-            className={
-              touched.contrasena && (!formData.contrasena || passwordError)
-                ? "input-error"
-                : ""
-            }
             required
           />
-
           <input
-            type="password"
             name="confirmar"
+            type="password"
             placeholder="Confirmar contraseña"
             value={formData.confirmar}
             onChange={handleChange}
-            onBlur={handleBlur}
-            className={
-              touched.confirmar && (!formData.confirmar || passwordError)
-                ? "input-error"
-                : ""
-            }
             required
           />
-
-          {/* MENSAJE DE ERROR */}
-          {passwordError && (
-            <p className="error-message">{passwordError}</p>
-          )}
-
           <input
-            type="email"
-            name="correo"
-            placeholder="Correo electrónico"
-            value={formData.correo}
-            onChange={handleChange}
-            onBlur={handleBlur}
-            className={touched.correo && !formData.correo ? "input-error" : ""}
-            required
-          />
-
-          <input
-            type="tel"
             name="telefono"
-            placeholder="Número de teléfono (opcional)"
+            type="tel"
+            placeholder="Teléfono (opcional)"
             value={formData.telefono}
             onChange={handleChange}
           />
@@ -168,13 +116,10 @@ export default function Register() {
         </form>
 
         <p className="register-link">
-          ¿Ya cuentas con una cuenta?{" "}
-          <a onClick={() => navigate("/login")}>
-            Inicia sesión aquí
-          </a>
+          ¿Ya tienes cuenta?{" "}
+          <a onClick={() => navigate("/login")}>Inicia sesión</a>
         </p>
       </div>
-      
     </div>
   );
 }

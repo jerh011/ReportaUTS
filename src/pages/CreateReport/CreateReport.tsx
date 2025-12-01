@@ -1,6 +1,6 @@
 // src/pages/CreateReport.tsx
 import "./CreateReport.css";
-import { useState, useEffect } from "react"; 
+import { useState, useEffect } from "react";
 import BottomNav from "../../components/BottomNav";
 import { ReportService } from "../../services/ReportService";
 import { Edificio } from "../../Model/EdifiioModel";
@@ -39,7 +39,9 @@ export default function CreateReport() {
   }, []);
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+    >
   ) => {
     const { name, value } = e.target;
     setFormData({
@@ -110,11 +112,12 @@ export default function CreateReport() {
         <label>Privacidad del Reporte</label>
         <select
           name="privacidad"
-          value={formData.privacidad !== null ? formData.privacidad.toString() : ""}
+          value={
+            formData.privacidad !== null ? formData.privacidad.toString() : ""
+          }
           onChange={handleChange}
           required
         >
-          <option value="">Seleccionar</option>
           <option value="true">Público</option>
           <option value="false">Privado</option>
         </select>
