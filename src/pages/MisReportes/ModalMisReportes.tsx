@@ -29,7 +29,7 @@ const ModalMisReportes: React.FC<ModalMisReportesProps> = ({
   return (
     <div className="modal-backdrop" onClick={closeModal}>
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-        <img
+        {/* <img
           src={
             selected.categoria === "Mantenimiento"
               ? "/icons/Categoria-Mantenimiento.png"
@@ -37,7 +37,14 @@ const ModalMisReportes: React.FC<ModalMisReportesProps> = ({
           }
           className="modal-cat-icon"
           alt="Icono Categoria"
-        />
+        /> */}
+        <img
+                  src={MisReportesServices.GetImageReporte(
+                    selected.imagenUrl || ""
+                  )}
+                  className="modal-cat-icon"
+                  alt="evidencia"
+                />
         <h2 className="modal-title">{selected.titulo}</h2>
 
         <div className="detail-info">

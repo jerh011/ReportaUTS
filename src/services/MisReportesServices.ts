@@ -6,7 +6,7 @@ const VITE_API_IMAGE = env.VITE_API_IMAGE;
 export const MisReportesServices = {
   async ReportsWithImagenes(): Promise<ReportePorUsuarioWhitImagen[]> {
     const rawUser = AppStorageService.get("user");
-    console.log(rawUser);
+    // console.log(rawUser);
     const usuario = typeof rawUser === "string" ? JSON.parse(rawUser) : rawUser;
     const usuarioId = usuario?.idUsuario ?? usuario?.id ?? null;
     // alert(usuarioId);
@@ -26,8 +26,10 @@ export const MisReportesServices = {
           `Error en la petición: ${response.status} - ${response.statusText}`
         );
       }
+      console.log(response);
 
       const data: ReportePorUsuarioWhitImagen[] = await response.json();
+      console.log(data);
       return data;
     } catch (error) {
       console.error("Error al obtener los reportes:", error);

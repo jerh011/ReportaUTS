@@ -1,10 +1,10 @@
 // src/services/HomeServise.ts
-
+import { env } from "../../env";
 import { ReportsDto } from "../Dtos/ReportsDto";
 import { AppStorageService } from "../lib/AppStorageService";
 import type { LoginResponse } from "../Response/LoginResponse";
-const API_URL = import.meta.env.VITE_API_URL;
 
+const API_URL = env.VITE_API_URL;
 export const HomeService = {
   async Reports(): Promise<ReportsDto[]> {
     try {

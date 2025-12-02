@@ -48,7 +48,7 @@ export const LoginService = {
 
       // El backend devuelve texto ("registro exitoso"), no JSON
       const text = await response.text();
-      console.log("Respuesta del servidor:", text);
+      // console.log("Respuesta del servidor:", text);
 
       // Si contiene la palabra 'exitoso', asumimos éxito
       return text.toLowerCase().includes("exitoso");
