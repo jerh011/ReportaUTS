@@ -186,7 +186,9 @@ export default function MisReportes() {
               // Generar key robusta: preferir id_report, si no existe usar combinacion + index
               const key =
                 r.id_report ??
-                `${r.titulo ?? "sin-titulo"}-${r.fechaFormateada ?? "sin-fecha"}-${idx}`;
+                `${r.titulo ?? "sin-titulo"}-${
+                  r.fechaFormateada ?? "sin-fecha"
+                }-${idx}`;
 
               return (
                 <article
@@ -196,9 +198,11 @@ export default function MisReportes() {
                 >
                   <div className="card-left">
                     <img
-                          src={MisReportesServices.GetImageReporte(r.imagenUrl || "")}
-                          className="modal-cat-icon"
-                          alt={r.categoria}           
+                      src={MisReportesServices.GetImageReporte(
+                        r.imagenUrl || ""
+                      )}
+                      className="modal-cat-icon"
+                      alt={r.categoria}
                     />
                   </div>
 
@@ -247,7 +251,9 @@ export default function MisReportes() {
               Ver más
             </button>
           ) : (
-            filtered.length > 0 && <div className="end-list">No hay más reportes</div>
+            filtered.length > 0 && (
+              <div className="end-list">No hay más reportes</div>
+            )
           )}
         </div>
       </main>
