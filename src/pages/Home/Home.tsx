@@ -5,7 +5,7 @@ import BottomNav from "../../components/BottomNav";
 import { HomeService } from "../../services/HomeServise";
 import { ReportsDto } from "../../Dtos/ReportsDto";
 
-// ✅ Servicio offline (SOLO LECTURA AQUÍ)
+// ✅ Servicio offline (SOLO LECTURA)
 import { OfflineReportService } from "../../services/OfflineReportService";
 import type { OfflineReporte } from "../../services/OfflineReportService";
 
@@ -22,30 +22,22 @@ export default function Home() {
     "Nuevo comentario en tu reporte ‘Pérdida de conexión Wi-Fi’ por parte del área TI.",
   ];
 
-  /* ======================================================
-     ✅ CARGA INICIAL
-     - Reportes online
-     - Reportes offline (solo lectura)
-     ====================================================== */
   useEffect(() => {
     async function cargarTodo() {
       try {
         const data = await HomeService.getReportes();
         setReportes(data);
-      } catch (e) {
-        console.error("Error cargando reportes:", e);
+      } catch (error) {
+        console.error("Error al cargar reportes:", error);
       }
 
-      // ✅ solo LEER localStorage
+      // ✅ leer reportes offline
       setOfflineReports(OfflineReportService.getAll());
     }
 
     cargarTodo();
   }, []);
 
-  /* ======================================================
-     ✅ CANCELAR REPORTE OFFLINE
-     ====================================================== */
   const cancelarReporte = (tempId: string) => {
     OfflineReportService.remove(tempId);
     setOfflineReports(OfflineReportService.getAll());
@@ -67,27 +59,19 @@ export default function Home() {
         </div>
       </header>
 
-      {/* ✅ TOAST OFFLINE (SIN BOTÓN ENVIAR) */}
+      {/* ✅ TOAST OFFLINE */}
       {offlineReports.length > 0 && (
         <div className="offline-toast">
           <p>
             ⚠️ Estás sin conexión. {offlineReports.length} reporte(s) guardados.
           </p>
-
-          <small style={{ display: "block", marginBottom: 6 }}>
-            Se enviarán automáticamente al reconectarte.
-          </small>
+          <small>Se enviarán automáticamente al reconectarte.</small>
 
           <ul>
             {offlineReports.map((rep) => (
               <li key={rep.tempId}>
                 <span>{rep.data.titulo}</span>
-                <button
-                  onClick={() => cancelarReporte(rep.tempId)}
-                  aria-label="Cancelar reporte"
-                >
-                  ✖
-                </button>
+                <button onClick={() => cancelarReporte(rep.tempId)}>✖</button>
               </li>
             ))}
           </ul>
@@ -100,7 +84,7 @@ export default function Home() {
         <p className="home-sub">Reporta fácil y mejora tu universidad</p>
       </section>
 
-      {/* CONTENIDO PRINCIPAL */}
+      {/* CONTENIDO */}
       <div className="home-main-bg">
         <main className="home-content">
           <div className="card-row">
@@ -115,10 +99,7 @@ export default function Home() {
             <div className="home-card">
               <h3>Reportes de la Comunidad</h3>
               <p>Ver reportes públicos hechos por otros usuarios.</p>
-              <button
-                className="card-btn"
-                onClick={() => nav("/community")}
-              >
+              <button className="card-btn" onClick={() => nav("/community")}>
                 Ver más
               </button>
             </div>
@@ -143,11 +124,7 @@ export default function Home() {
                 reportes.map((rep, i) => (
                   <div key={i} className="table-row">
                     <span>{rep.titulo}</span>
-                    <span
-                      className={`status ${
-                        rep.estado?.toLowerCase() ?? "pendiente"
-                      }`}
-                    >
+                    <span className={`status ${rep.estado?.toLowerCase() ?? "pendiente"}`}>
                       {rep.estado ?? "Pendiente"}
                     </span>
                     <span>{rep.fechaFormateada}</span>
@@ -156,10 +133,7 @@ export default function Home() {
               )}
             </div>
 
-            <button
-              className="link-btn"
-              onClick={() => nav("/my-reports")}
-            >
+            <button className="link-btn" onClick={() => nav("/my-reports")}>
               Ver más
             </button>
           </div>
@@ -175,12 +149,8 @@ export default function Home() {
             .slice(0, showAllNotifs ? notificaciones.length : 1)
             .map((msg, i) => (
               <div key={i} className="notif-card">
-                <img
-                  src="/icons/notificacion.png"
-                  alt="Notificación"
-                  className="notif-icon"
-                />
-                <p className="notif-text">{msg}</p>
+                <img src="/icons/notificacion.png" alt="" />
+                <p>{msg}</p>
               </div>
             ))}
         </div>

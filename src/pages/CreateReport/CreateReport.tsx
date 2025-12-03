@@ -1,15 +1,15 @@
 // src/pages/CreateReport.tsx
 import "./CreateReport.css";
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import BottomNav from "../../components/BottomNav";
+
 import { ReportService } from "../../services/ReportService";
+import { OfflineReportService } from "../../services/OfflineReportService";
+
 import { Edificio } from "../../Model/EdifiioModel";
 import { Categoria } from "../../Model/CategoriaMode";
 import { ReporteRegistroModel } from "../../Model/ReporteRegistroModel";
-import { useNavigate } from "react-router-dom";
-
-// ✅ Servicio para guardar y sincronizar reportes sin internet
-import { OfflineReportService } from "../../services/OfflineReportService";
 
 export default function CreateReport() {
   const nav = useNavigate();
@@ -25,23 +25,26 @@ export default function CreateReport() {
   const [edificios, setEdificios] = useState<Edificio[]>([]);
   const [categorias, setCategorias] = useState<Categoria[]>([]);
   const [imagenes, setImagenes] = useState<{ file: File; url: string }[]>([]);
+  const [enviando, setEnviando] = useState(false);
 
-  // ✅ Cargar edificios y categorías (esto NO depende de conexión en el submit)
+  /* ======================================================
+     CARGA DE CATÁLOGOS
+  ====================================================== */
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const edificiosData = await ReportService.GetEdificios();
-        setEdificios(edificiosData);
-
-        const categoriasData = await ReportService.GetCategorias();
-        setCategorias(categoriasData);
+        setEdificios(await ReportService.GetEdificios());
+        setCategorias(await ReportService.GetCategorias());
       } catch (error) {
-        console.error("Error cargando datos:", error);
+        console.error("Error cargando catálogos:", error);
       }
     };
     fetchData();
   }, []);
 
+  /* ======================================================
+     HANDLE CHANGE
+  ====================================================== */
   const handleChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
@@ -54,112 +57,142 @@ export default function CreateReport() {
     });
   };
 
-  // ✅ Manejo de imágenes (máx. 2)
-  const handleImage = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files ? Array.from(e.target.files) : [];
-    const nuevas: { file: File; url: string }[] = [];
+  /* ======================================================
+     COMPRESIÓN DE IMÁGENES
+  ====================================================== */
+  const comprimirImagen = (file: File): Promise<File> =>
+    new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement("canvas");
+          const MAX = 1200;
 
-    files.forEach((file) => {
-      if (imagenes.length + nuevas.length < 2) {
-        const reader = new FileReader();
-        reader.onload = (event) => {
-          nuevas.push({ file, url: event.target?.result as string });
-          if (
-            nuevas.length === files.length ||
-            imagenes.length + nuevas.length === 2
-          ) {
-            setImagenes((prev) => [...prev, ...nuevas]);
+          let { width, height } = img;
+          if (width > height && width > MAX) {
+            height *= MAX / width;
+            width = MAX;
+          } else if (height > MAX) {
+            width *= MAX / height;
+            height = MAX;
           }
+
+          canvas.width = width;
+          canvas.height = height;
+
+          canvas.getContext("2d")?.drawImage(img, 0, 0, width, height);
+
+          canvas.toBlob(
+            (blob) =>
+              blob
+                ? resolve(new File([blob], file.name, { type: "image/jpeg" }))
+                : reject(),
+            "image/jpeg",
+            0.8
+          );
         };
-        reader.readAsDataURL(file);
-      }
+        img.src = e.target?.result as string;
+      };
+      reader.readAsDataURL(file);
     });
+
+  /* ======================================================
+     MANEJO DE IMÁGENES (MÁX 2)
+  ====================================================== */
+  const handleImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files ? Array.from(e.target.files) : [];
+    if (!files.length) return;
+
+    const permitidas = files.slice(0, 2 - imagenes.length);
+
+    const procesadas = await Promise.all(
+      permitidas.map(async (file) => {
+        const comp = await comprimirImagen(file);
+        return new Promise<{ file: File; url: string }>((resolve) => {
+          const reader = new FileReader();
+          reader.onload = (ev) =>
+            resolve({ file: comp, url: ev.target?.result as string });
+          reader.readAsDataURL(comp);
+        });
+      })
+    );
+
+    setImagenes((prev) => [...prev, ...procesadas].slice(0, 2));
+    e.target.value = "";
   };
 
   const eliminarImagen = (index: number) => {
     setImagenes((prev) => prev.filter((_, i) => i !== index));
   };
 
-  /**
-   * ✅ EVENTO ONLINE GLOBAL
-   * Cuando el dispositivo recupera internet:
-   * - Se intentan enviar automáticamente TODOS los reportes guardados offline
-   * - No se muestra botón al usuario (UX limpia)
-   */
-  // useEffect(() => {
-  //   const handleOnline = () => {
-  //     OfflineReportService.sync();
-  //   };
-
-  //   window.addEventListener("online", handleOnline);
-  //   return () => window.removeEventListener("online", handleOnline);
-  // }, []);
-
-  /**
-   * ✅ SUBMIT DEL FORMULARIO
-   * Lógica completa:
-   * 1. Construimos el modelo del reporte
-   * 2. Si NO hay internet → guardar offline y salir
-   * 3. Si hay internet → enviar normal
-   * 4. Si falla el envío → guardar offline como respaldo
-   */
+  /* ======================================================
+     SUBMIT
+  ====================================================== */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const categoriaId = Number(formData.categoria);
-    const edificioId = Number(formData.edificio);
+    if (!imagenes.length) {
+      alert("⚠️ Debes subir al menos una imagen");
+      return;
+    }
+
+    if (formData.privacidad === null) {
+      alert("⚠️ Selecciona la privacidad");
+      return;
+    }
 
     const nuevoReporte: ReporteRegistroModel = {
       titulo: formData.titulo,
       descripcion: formData.descripcion,
-      privacidad: formData.privacidad ?? false,
-      edificioId,
-      categoriaId,
+      privacidad: formData.privacidad,
+      edificioId: Number(formData.edificio),
+      categoriaId: Number(formData.categoria),
       estadoId: 1,
-      imagen: imagenes[0]?.file || null,
+      imagen: imagenes[0].file,
     };
 
-    // ✅ CASO 1: NO HAY INTERNET
+    // ✅ SIN INTERNET → GUARDAR OFFLINE
     if (!navigator.onLine) {
       await OfflineReportService.save(nuevoReporte);
-      alert(
-        "⚠️ Estás sin internet. El reporte se guardó y se enviará automáticamente al reconectarse."
-      );
+      alert("⚠️ Sin internet. El reporte se guardó y se enviará luego.");
       nav("/home");
       return;
     }
 
-    // ✅ CASO 2: HAY INTERNET
+    // ✅ CON INTERNET
     try {
+      setEnviando(true);
       await ReportService.RegistrarReporte(nuevoReporte);
       alert("✅ Reporte enviado con éxito");
       nav("/home");
-    } catch (error) {
-      // ✅ Fallback: si algo falla (timeout, red inestable, etc.)
+    } catch {
       await OfflineReportService.save(nuevoReporte);
-      alert("⚠️ Error de red. El reporte se guardó y se enviará luego.");
+      alert("⚠️ Error de red. El reporte se guardó offline.");
       nav("/home");
+    } finally {
+      setEnviando(false);
     }
   };
 
+  /* ======================================================
+     UI
+  ====================================================== */
   return (
     <div className="create-container">
       <header className="create-header">
-        <h2>
-          Crear Reporte <span>(Formulario)</span>
-        </h2>
+        <h2>Crear Reporte</h2>
       </header>
 
       <form className="create-form" onSubmit={handleSubmit}>
-        <label>Privacidad del Reporte</label>
+        <label>Privacidad</label>
         <select
           name="privacidad"
-          value={
-            formData.privacidad !== null ? formData.privacidad.toString() : ""
-          }
+          value={formData.privacidad?.toString() || ""}
           onChange={handleChange}
           required
         >
+          <option value="">Seleccionar</option>
           <option value="true">Público</option>
           <option value="false">Privado</option>
         </select>
@@ -171,19 +204,17 @@ export default function CreateReport() {
           onChange={handleChange}
           required
         >
-          <option value="">Seleccionar edificio</option>
+          <option value="">Seleccionar</option>
           {edificios.map((e) => (
-            <option key={`edificio-${e.id_edificio}`} value={e.id_edificio}>
+            <option key={e.id_edificio} value={e.id_edificio}>
               {e.nombre}
             </option>
           ))}
         </select>
 
-        <label>Título del Reporte</label>
+        <label>Título</label>
         <input
-          type="text"
           name="titulo"
-          placeholder="Pequeño título sobre el suceso"
           value={formData.titulo}
           onChange={handleChange}
           required
@@ -198,10 +229,7 @@ export default function CreateReport() {
         >
           <option value="">Seleccionar</option>
           {categorias.map((c) => (
-            <option
-              key={`categoria-${c.idcategorias}`}
-              value={c.idcategorias?.toString() || ""}
-            >
+            <option key={c.idcategorias} value={c.idcategorias}>
               {c.nombre}
             </option>
           ))}
@@ -210,50 +238,37 @@ export default function CreateReport() {
         <label>Descripción</label>
         <textarea
           name="descripcion"
-          placeholder="Describir la fuente del problema"
           value={formData.descripcion}
           onChange={handleChange}
-          rows={3}
           required
         />
 
-        <label>Subir imágenes (máx. 2)</label>
-        <div className="upload-box">
-          <input
-            type="file"
-            accept="image/*"
-            multiple
-            onChange={handleImage}
-            disabled={imagenes.length >= 2}
-          />
-          {imagenes.length > 0 && (
-            <div className="preview-container">
-              {imagenes.map((img, index) => (
-                <div className="preview" key={`preview-${index}`}>
-                  <img src={img.url} alt={`imagen-${index}`} />
-                  <button
-                    type="button"
-                    className="eliminar"
-                    onClick={() => eliminarImagen(index)}
-                  >
-                    🗑️
-                  </button>
-                </div>
-              ))}
+        <label>Imágenes (máx. 2)</label>
+        <input
+          type="file"
+          accept="image/*"
+          multiple
+          onChange={handleImage}
+          disabled={imagenes.length >= 2}
+        />
+
+        <div className="preview-container">
+          {imagenes.map((img, i) => (
+            <div key={i} className="preview">
+              <img src={img.url} alt="" />
+              <button type="button" onClick={() => eliminarImagen(i)}>
+                🗑️
+              </button>
             </div>
-          )}
+          ))}
         </div>
 
         <div className="form-actions">
-          <button
-            type="button"
-            className="cancel-btn"
-            onClick={() => nav("/home")}
-          >
+          <button type="button" onClick={() => nav("/home")}>
             Cancelar
           </button>
-          <button type="submit" className="submit-btn">
-            Enviar Reporte
+          <button type="submit" disabled={enviando}>
+            {enviando ? "Enviando..." : "Enviar"}
           </button>
         </div>
       </form>

@@ -182,6 +182,7 @@ export default function MisReportes() {
               No se encontraron reportes
             </div>
           ) : (
+<<<<<<< HEAD
             filtered.slice(0, visibleCount).map((r) => (
               <article
                 key={r.id_report}
@@ -231,6 +232,63 @@ export default function MisReportes() {
                 </div>
               </article>
             ))
+=======
+            filtered.slice(0, visibleCount).map((r, idx) => {
+              // Generar key robusta: preferir id_report, si no existe usar combinacion + index
+              const key =
+                r.id_report ??
+                `${r.titulo ?? "sin-titulo"}-${
+                  r.fechaFormateada ?? "sin-fecha"
+                }-${idx}`;
+
+              return (
+                <article
+                  key={key}
+                  className="report-card"
+                  onClick={() => openModal(r)}
+                >
+                  <div className="card-left">
+                    <img
+                      src={MisReportesServices.GetImageReporte(
+                        r.imagenUrl || ""
+                      )}
+                      className="modal-cat-icon"
+                      alt={r.categoria}
+                    />
+                  </div>
+
+                  <div className="card-body">
+                    <h3 className="report-title">{r.titulo}</h3>
+                    <p className="cat-sub">
+                      <strong>{r.categoria}</strong> - {r.descripcion}
+                    </p>
+                  </div>
+
+                  <div className="card-right">
+                    <div
+                      className={`privacy-badge ${
+                        r.privacidadTexto?.toLowerCase() === "publico"
+                          ? "pub"
+                          : "anon"
+                      }`}
+                    >
+                      {r.privacidadTexto?.toLowerCase() === "publico"
+                        ? "Público"
+                        : "Anónimo"}
+                    </div>
+
+                    <div
+                      className={`estado-tag estado-${(r.estado ?? "")
+                        .toString()
+                        .replace(/\s+/g, "-")}`}
+                    >
+                      {r.estado}
+                    </div>
+                  </div>
+                </article>
+              );
+            })
+>>>>>>> origin/main
           )}
         </div>
 

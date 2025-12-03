@@ -12,7 +12,11 @@
   background: white;
   padding: 16px;
   text-align: center;
+<<<<<<< HEAD
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+=======
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+>>>>>>> origin/main
   position: sticky;
   top: 0;
   z-index: 10;
@@ -41,7 +45,11 @@
   background: white;
   padding: 22px;
   border-radius: 20px;
+<<<<<<< HEAD
   box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+=======
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+>>>>>>> origin/main
 }
 
 .create-form label {
@@ -101,7 +109,11 @@
   height: 120px;
   border-radius: 10px;
   overflow: hidden;
+<<<<<<< HEAD
   box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+=======
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+>>>>>>> origin/main
   background: #fff;
 }
 
@@ -160,6 +172,57 @@
   transition: background 0.3s;
 }
 
+<<<<<<< HEAD
 .cancel-btn:hover { background: #a22e2e; }
 .submit-btn:hover { background: #155033; }
 
+=======
+.cancel-btn:hover {
+  background: #a22e2e;
+}
+
+.submit-btn:hover {
+  background: #155033;
+}
+
+.upload-btn {
+  display: inline-block;
+  padding: 10px 20px;
+  margin: 5px;
+  background-color: #1f7047;
+  color: white;
+  border-radius: 10px;
+  cursor: pointer;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 600;
+  transition: background 0.3s;
+}
+
+.upload-btn:active {
+  background-color: #155033;
+}
+
+/* === AGREGADO: Mejoras para botones deshabilitados y estados === */
+button:disabled,
+.upload-btn[style*="pointer-events: none"] {
+  opacity: 0.5;
+  cursor: not-allowed !important;
+}
+
+.submit-btn:disabled {
+  background-color: #6c757d;
+  cursor: not-allowed;
+}
+
+.cancel-btn:disabled {
+  background-color: #9a9a9a;
+  cursor: not-allowed;
+}
+
+/* Ajuste para que los botones de upload se vean bien juntos */
+.upload-box label.upload-btn {
+  display: inline-block;
+  margin: 5px;
+}
+>>>>>>> origin/main
