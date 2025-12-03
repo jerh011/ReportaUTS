@@ -4,8 +4,7 @@ import { AppStorageService } from "../lib/AppStorageService";
 import { ImageBase64Converter } from "../lib/ImageBase64Converter";
 import { Edificio } from "../Model/EdifiioModel";
 import { Categoria } from "../Model/CategoriaMode";
-import { env } from "../../env";
-const API_URL = env.VITE_API_URL;
+const API_URL = import.meta.env.VITE_API_URL;
 
 export const ReportService = {
   async GetEdificios(): Promise<Edificio[]> {
@@ -18,7 +17,7 @@ export const ReportService = {
     }
 
     try {
-      const response = await fetch(`${API_URL}/Edificio`);
+      const response = await fetch(`${API_URL}/api/Edificio`);
       if (!response.ok) throw new Error(`Error: ${response.status}`);
 
       const edificios: Edificio[] = await response.json();
@@ -45,7 +44,7 @@ export const ReportService = {
     }
 
     try {
-      const response = await fetch(`${API_URL}/Categoria`);
+      const response = await fetch(`${API_URL}/api/Categoria`);
       if (!response.ok) throw new Error(`Error: ${response.status}`);
 
       const categorias: Categoria[] = await response.json();
@@ -79,7 +78,7 @@ export const ReportService = {
     }
 
     // Enviar al backend
-    const response = await fetch(`${API_URL}/Reportes/RegistrarReporte`, {
+    const response = await fetch(`${API_URL}/api/Reportes/RegistrarReporte`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
