@@ -177,13 +177,49 @@ export default function CreateReport() {
 
         <label>Subir imágenes (máx. 2)</label>
         <div className="upload-box">
+          {/* Botón para galería */}
           <input
+            id="gallery-input"
             type="file"
             accept="image/*"
             multiple
             onChange={handleImage}
             disabled={imagenes.length >= 2}
+            style={{ display: "none" }}
           />
+          <label
+            htmlFor="gallery-input"
+            className="upload-btn"
+            style={{
+              opacity: imagenes.length >= 2 ? 0.5 : 1,
+              pointerEvents: imagenes.length >= 2 ? "none" : "auto",
+            }}
+          >
+            📁 Galería
+          </label>
+
+          {/* Botón para cámara */}
+          <input
+            id="camera-input"
+            type="file"
+            accept="image/*"
+            capture="environment"
+            onChange={handleImage}
+            disabled={imagenes.length >= 2}
+            style={{ display: "none" }}
+          />
+          <label
+            htmlFor="camera-input"
+            className="upload-btn"
+            style={{
+              opacity: imagenes.length >= 2 ? 0.5 : 1,
+              pointerEvents: imagenes.length >= 2 ? "none" : "auto",
+            }}
+          >
+            📷 Cámara
+          </label>
+
+          {/* Vista previa de imágenes */}
           {imagenes.length > 0 && (
             <div className="preview-container">
               {imagenes.map((img, index) => (
