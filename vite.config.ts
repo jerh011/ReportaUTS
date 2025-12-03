@@ -31,10 +31,6 @@ export default defineConfig({
 
       workbox: {
         maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
-<<<<<<< HEAD
-=======
-        globDirectory: "dist",
->>>>>>> origin/main
         globPatterns: ["**/*.{js,css,html,svg,png,ico}"],
         globIgnores: ["**/*cactus*.png"],
         cleanupOutdatedCaches: true,
