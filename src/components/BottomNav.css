@@ -1,0 +1,80 @@
+/* === Bottom nav actualizado === */
+.bottom-nav {
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 12px;
+  width: calc(100% - 28px);
+  max-width: 520px;
+  background: var(--card);
+  border-radius: 26px;
+  padding: 8px 10px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  z-index: 100;
+  gap: 8px;
+  height: 50px;
+}
+
+.nav-item {
+  background: transparent;
+  border: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+.nav-item:hover {
+  transform: translateY(-2px);
+}
+
+.nav-item img {
+  width: 34px;
+  height: 34px;
+  transition: transform 0.2s ease;
+}
+
+.nav-item:hover img {
+  transform: scale(1.1);
+}
+
+/* Botón central */
+.center-btn {
+  width: 66px;
+  height: 66px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 6px 18px rgba(45, 122, 80, 0.35);
+  border: 3px solid #f4f4f4;
+  transform: translateY(-16px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  z-index: 101;
+  transition: all 0.25s ease;
+}
+
+.center-btn:hover {
+  transform: translateY(-18px) scale(1.05);
+}
+
+.center-btn img {
+  width: 36px;
+  height: 36px;
+}
+
+@media (max-width: 420px) {
+  .nav-item img {
+    width: 30px;
+    height: 30px;
+  }
+  .center-btn {
+    width: 58px;
+    height: 58px;
+    transform: translateY(-14px);
+  }
+}
