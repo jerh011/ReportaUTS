@@ -163,6 +163,7 @@
 .cancel-btn:hover {
   background: #a22e2e;
 }
+
 .submit-btn:hover {
   background: #155033;
 }
@@ -171,14 +172,39 @@
   display: inline-block;
   padding: 10px 20px;
   margin: 5px;
-  background-color: #007bff;
+  background-color: #1f7047;
   color: white;
-  border-radius: 5px;
+  border-radius: 10px;
   cursor: pointer;
   text-align: center;
   font-size: 14px;
+  font-weight: 600;
+  transition: background 0.3s;
 }
 
 .upload-btn:active {
-  background-color: #0056b3;
+  background-color: #155033;
+}
+
+/* === AGREGADO: Mejoras para botones deshabilitados y estados === */
+button:disabled,
+.upload-btn[style*="pointer-events: none"] {
+  opacity: 0.5;
+  cursor: not-allowed !important;
+}
+
+.submit-btn:disabled {
+  background-color: #6c757d;
+  cursor: not-allowed;
+}
+
+.cancel-btn:disabled {
+  background-color: #9a9a9a;
+  cursor: not-allowed;
+}
+
+/* Ajuste para que los botones de upload se vean bien juntos */
+.upload-box label.upload-btn {
+  display: inline-block;
+  margin: 5px;
 }

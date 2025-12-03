@@ -22,6 +22,7 @@ export default function CreateReport() {
   const [edificios, setEdificios] = useState<Edificio[]>([]);
   const [categorias, setCategorias] = useState<Categoria[]>([]);
   const [imagenes, setImagenes] = useState<{ file: File; url: string }[]>([]);
+  const [enviando, setEnviando] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -50,25 +51,108 @@ export default function CreateReport() {
     });
   };
 
-  const handleImage = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files ? Array.from(e.target.files) : [];
-    const nuevas: { file: File; url: string }[] = [];
+  // Función para comprimir imágenes
+  const comprimirImagen = (file: File): Promise<File> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement("canvas");
+          const MAX_WIDTH = 1200;
+          const MAX_HEIGHT = 1200;
 
-    files.forEach((file) => {
-      if (imagenes.length + nuevas.length < 2) {
-        const reader = new FileReader();
-        reader.onload = (event) => {
-          nuevas.push({ file, url: event.target?.result as string });
-          if (
-            nuevas.length === files.length ||
-            imagenes.length + nuevas.length === 2
-          ) {
-            setImagenes((prev) => [...prev, ...nuevas]);
+          let width = img.width;
+          let height = img.height;
+
+          if (width > height) {
+            if (width > MAX_WIDTH) {
+              height *= MAX_WIDTH / width;
+              width = MAX_WIDTH;
+            }
+          } else {
+            if (height > MAX_HEIGHT) {
+              width *= MAX_HEIGHT / height;
+              height = MAX_HEIGHT;
+            }
           }
+
+          canvas.width = width;
+          canvas.height = height;
+
+          const ctx = canvas.getContext("2d");
+          ctx?.drawImage(img, 0, 0, width, height);
+
+          canvas.toBlob(
+            (blob) => {
+              if (blob) {
+                resolve(new File([blob], file.name, { type: "image/jpeg" }));
+              } else {
+                reject(new Error("Error al comprimir"));
+              }
+            },
+            "image/jpeg",
+            0.8
+          );
         };
-        reader.readAsDataURL(file);
-      }
+        img.onerror = () => reject(new Error("Error al cargar imagen"));
+        img.src = e.target?.result as string;
+      };
+      reader.onerror = () => reject(new Error("Error al leer archivo"));
+      reader.readAsDataURL(file);
     });
+  };
+
+  const handleImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files ? Array.from(e.target.files) : [];
+
+    if (files.length === 0) return;
+
+    try {
+      // Procesar cada archivo de forma asíncrona
+      const promesas = files.slice(0, 2 - imagenes.length).map(async (file) => {
+        try {
+          // Comprimir la imagen antes de procesarla
+          const archivoComprimido = await comprimirImagen(file);
+
+          return new Promise<{ file: File; url: string }>((resolve, reject) => {
+            const reader = new FileReader();
+
+            reader.onload = (event) => {
+              resolve({
+                file: archivoComprimido,
+                url: event.target?.result as string,
+              });
+            };
+
+            reader.onerror = () => {
+              reject(new Error("Error al leer la imagen"));
+            };
+
+            reader.readAsDataURL(archivoComprimido);
+          });
+        } catch (error) {
+          console.error("Error al comprimir imagen:", error);
+          throw error;
+        }
+      });
+
+      // Esperar a que todas las imágenes se procesen
+      const nuevasImagenes = await Promise.all(promesas);
+
+      setImagenes((prev) => {
+        const total = [...prev, ...nuevasImagenes];
+        return total.slice(0, 2); // Solo mantener máximo 2
+      });
+
+      console.log("Imágenes cargadas exitosamente:", nuevasImagenes.length);
+    } catch (error) {
+      console.error("Error procesando imágenes:", error);
+      alert("Error al cargar la imagen. Intenta de nuevo.");
+    }
+
+    // Limpiar el input para permitir seleccionar la misma imagen de nuevo
+    e.target.value = "";
   };
 
   const eliminarImagen = (index: number) => {
@@ -78,13 +162,24 @@ export default function CreateReport() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    // Validaciones
+    if (imagenes.length === 0) {
+      alert("⚠️ Debes subir al menos una imagen");
+      return;
+    }
+
+    if (formData.privacidad === null) {
+      alert("⚠️ Selecciona la privacidad del reporte");
+      return;
+    }
+
     const categoriaId = formData.categoria ? Number(formData.categoria) : 0;
     const edificioId = formData.edificio ? Number(formData.edificio) : 0;
 
     const nuevoReporte: ReporteRegistroModel = {
       titulo: formData.titulo,
       descripcion: formData.descripcion,
-      privacidad: formData.privacidad ?? false,
+      privacidad: formData.privacidad,
       edificioId,
       categoriaId,
       estadoId: 1,
@@ -92,11 +187,23 @@ export default function CreateReport() {
     };
 
     try {
+      setEnviando(true);
+      console.log("Enviando reporte...", nuevoReporte);
+
       await ReportService.RegistrarReporte(nuevoReporte);
-      alert("Reporte enviado con éxito ✅");
+
+      console.log("Reporte enviado exitosamente");
+      alert("✅ Reporte enviado con éxito");
       nav("/home");
     } catch (error) {
       console.error("Error al registrar el reporte:", error);
+      alert(
+        `❌ Error al enviar el reporte: ${
+          error instanceof Error ? error.message : "Error desconocido"
+        }`
+      );
+    } finally {
+      setEnviando(false);
     }
   };
 
@@ -118,6 +225,7 @@ export default function CreateReport() {
           onChange={handleChange}
           required
         >
+          <option value="">Seleccionar privacidad</option>
           <option value="true">Público</option>
           <option value="false">Privado</option>
         </select>
@@ -175,9 +283,12 @@ export default function CreateReport() {
           required
         />
 
-        <label>Subir imágenes (máx. 2)</label>
+        <label>
+          Subir imágenes (máx. 2){" "}
+          {imagenes.length > 0 && `- ${imagenes.length}/2`}
+        </label>
         <div className="upload-box">
-          {/* Botón para galería */}
+          {/* Input oculto para galería */}
           <input
             id="gallery-input"
             type="file"
@@ -193,12 +304,13 @@ export default function CreateReport() {
             style={{
               opacity: imagenes.length >= 2 ? 0.5 : 1,
               pointerEvents: imagenes.length >= 2 ? "none" : "auto",
+              cursor: imagenes.length >= 2 ? "not-allowed" : "pointer",
             }}
           >
             📁 Galería
           </label>
 
-          {/* Botón para cámara */}
+          {/* Input oculto para cámara */}
           <input
             id="camera-input"
             type="file"
@@ -214,6 +326,7 @@ export default function CreateReport() {
             style={{
               opacity: imagenes.length >= 2 ? 0.5 : 1,
               pointerEvents: imagenes.length >= 2 ? "none" : "auto",
+              cursor: imagenes.length >= 2 ? "not-allowed" : "pointer",
             }}
           >
             📷 Cámara
@@ -243,11 +356,12 @@ export default function CreateReport() {
             type="button"
             className="cancel-btn"
             onClick={() => nav("/home")}
+            disabled={enviando}
           >
             Cancelar
           </button>
-          <button type="submit" className="submit-btn">
-            Enviar Reporte
+          <button type="submit" className="submit-btn" disabled={enviando}>
+            {enviando ? "Enviando..." : "Enviar Reporte"}
           </button>
         </div>
       </form>
