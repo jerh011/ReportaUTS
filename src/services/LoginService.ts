@@ -5,8 +5,8 @@ import { RegisterUserDto } from "../Dtos/RegisterUserDto ";
 const API_URL = import.meta.env.VITE_API_URL;
 export const LoginService = {
   async login(data: LoginDto) {
-    console.log(data);
-    alert(`${API_URL}/api/Login`);
+    // console.log(data);
+    // alert(`${API_URL}/api/Login`);
     try {
       const response = await fetch(`${API_URL}/api/Login`, {
         method: "POST",
@@ -34,8 +34,8 @@ export const LoginService = {
   },
 
   async RegistrarUsuario(data: RegisterUserDto): Promise<boolean> {
-    console.log(data);
-    alert(`${API_URL}/api/Login/RegistrarUsuario`);
+    // console.log(data);
+    // alert(`${API_URL}/api/Login/RegistrarUsuario`);
     try {
       const response = await fetch(`${API_URL}/api/Login/RegistrarUsuario`, {
         method: "POST",
