@@ -198,9 +198,7 @@ export default function MisReportes() {
                 >
                   <div className="card-left">
                     <img
-                      src={MisReportesServices.GetImageReporte(
-                        r.imagenUrl || ""
-                      )}
+                      src={r.categoria  === "Sisteama"? "/icons/Categoria-Sistemas.png":"/icons/Categoria-Mantenimiento.png"}
                       className="modal-cat-icon"
                       alt={r.categoria}
                     />

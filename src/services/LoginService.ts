@@ -32,8 +32,10 @@ export const LoginService = {
   },
 
   async RegistrarUsuario(data: RegisterUserDto): Promise<boolean> {
+    // console.log(data);
+    // alert(`${API_URL}/api/Login/RegistrarUsuario`);
     try {
-      const response = await fetch(`${API_URL}/Login/RegistrarUsuario`, {
+      const response = await fetch(`${API_URL}/api/Login/RegistrarUsuario`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
@@ -44,11 +46,9 @@ export const LoginService = {
         console.error("Error del backend:", errorText);
         return false;
       }
-
       // El backend devuelve texto ("registro exitoso"), no JSON
       const text = await response.text();
       // console.log("Respuesta del servidor:", text);
-
       // Si contiene la palabra 'exitoso', asumimos éxito
       return text.toLowerCase().includes("exitoso");
     } catch (error) {

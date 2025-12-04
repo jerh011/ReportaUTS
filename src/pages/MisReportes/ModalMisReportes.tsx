@@ -38,12 +38,10 @@ const ModalMisReportes: React.FC<ModalMisReportesProps> = ({
           className="modal-cat-icon"
           alt="Icono Categoria"
         /> */}
-        <img
-                  src={MisReportesServices.GetImageReporte(
-                    selected.imagenUrl || ""
-                  )}
+        
+        <img src={selected.categoria  === "Sisteama"? "/icons/Categoria-Sistemas.png":"/icons/Categoria-Mantenimiento.png"}
                   className="modal-cat-icon"
-                  alt="evidencia"
+                  alt={selected.categoria }
                 />
         <h2 className="modal-title">{selected.titulo}</h2>
 
