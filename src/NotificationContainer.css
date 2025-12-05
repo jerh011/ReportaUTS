@@ -1,0 +1,141 @@
+/* === CONTENEDOR GENERAL === */
+.nc-container {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  z-index: 99999; /* MUY ALTO para que esté por encima de todo */
+  pointer-events: none; /* Permite clics en elementos detrás excepto en tarjetas */
+}
+
+/* === TARJETA DE NOTIFICACIÓN === */
+.nc-card {
+  width: 320px;
+  padding: 14px 16px;
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.18);
+  border-left: 5px solid transparent;
+  pointer-events: auto; /* Permite clic en el botón de cerrar */
+  overflow: hidden;
+  animation: nc-slideIn 0.25s ease-out;
+}
+
+/* Animación de entrada */
+@keyframes nc-slideIn {
+  from {
+    transform: translateX(40px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* === CONTENIDO === */
+.nc-body {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+/* Ícono */
+.nc-icon {
+  font-size: 22px;
+  margin-top: 2px;
+}
+
+/* Texto */
+.nc-content {
+  flex: 1;
+}
+
+.nc-title {
+  font-size: 15px;
+  font-weight: 700;
+  margin: 0;
+  color: #222;
+}
+
+.nc-message {
+  font-size: 14px;
+  margin: 4px 0 0;
+  color: #444;
+}
+
+/* Cerrar */
+.nc-close {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  opacity: 0.6;
+  transition: 0.2s;
+}
+
+.nc-close:hover {
+  opacity: 1;
+}
+
+/* Ícono cerrar */
+.nc-close-icon {
+  width: 18px;
+  height: 18px;
+}
+
+/* === BARRA DE PROGRESO === */
+.nc-progress {
+  height: 3px;
+  width: 100%;
+  background: rgba(0, 0, 0, 0.15);
+  margin-top: 8px;
+  border-radius: 2px;
+  transform-origin: left;
+}
+
+/* Animación de la barra */
+@keyframes nc-shrink {
+  from {
+    transform: scaleX(1);
+  }
+  to {
+    transform: scaleX(0);
+  }
+}
+
+/* === COLORES SEGÚN TIPO === */
+
+/* SUCCESS */
+.nc-bg-success {
+  background-color: #e8fbe8;
+}
+.nc-border-success {
+  border-color: #34c759;
+}
+
+/* ERROR */
+.nc-bg-error {
+  background-color: #fdeaea;
+}
+.nc-border-error {
+  border-color: #ff3b30;
+}
+
+/* WARNING */
+.nc-bg-warning {
+  background-color: #fff9e6;
+}
+.nc-border-warning {
+  border-color: #ffcc00;
+}
+
+/* INFO */
+.nc-bg-info {
+  background-color: #e8f2ff;
+}
+.nc-border-info {
+  border-color: #0a84ff;
+}
