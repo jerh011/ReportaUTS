@@ -7,7 +7,7 @@ import { ReportePorUsuarioWhitImagen } from "../../Dtos/ReportePorUsuarioWhitIma
 import { MisReportesServices } from "../../services/MisReportesServices";
 
 /*
-  USANDO DIRECTAMENTE EL MODELO: ReportePorUsuarioWhitImagen
+   DIRECTAMENTE EL MODELO: ReportePorUsuarioWhitImagen
   
   Campos disponibles:
   ✓ id_report

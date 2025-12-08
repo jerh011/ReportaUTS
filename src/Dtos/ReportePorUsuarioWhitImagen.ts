@@ -7,4 +7,7 @@ export class ReportePorUsuarioWhitImagen {
   fechaFormateada?: string;
   descripcion?: string;
   imagenUrl?: string; // ruta relativa que puedes concatenar con la base URL si quieres
+
+
+  votos?: number;
 }
